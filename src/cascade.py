@@ -7,29 +7,22 @@ Module with routines used for cascading procedure.
 import numpy as np
 from scipy import stats
 
+
 def assign_pseudolabels(predictions, test_nodes, conf_cutoff):
     '''
     Assign pseudo labels to nodes with high confidence.
 
     Assign node.label_conf = conf_score to high confidence nodes
     '''
-    # high_conf_nodes = [(p[0], p[2]) for p in predictions if p[2] >= conf_cutoff]
-    # # print("num of conf nodes: {}".format(len(high_conf_nodes)))
-    
-    # for node, conf in high_conf_nodes:
-    #     node.pseudo_label = node.predicted_label
-    #     node.label_conf = conf
-        
-    # pruned_test_set = [
-    #     n for n in test_nodes
-    #     if n not in set([n[0] for n in high_conf_nodes])
-    # ]
+
     pruned_test_set = []
     high_conf_nodes = 0
     conf_vals = []
-    
+
     for node_tuple in predictions:
-        node = node_tuple[0]; pred = node_tuple[1]; conf = node_tuple[2]
+        node = node_tuple[0]
+        pred = node_tuple[1]
+        conf = node_tuple[2]
         if conf >= conf_cutoff:
             high_conf_nodes += 1
             node.pseudo_label = pred
@@ -38,10 +31,6 @@ def assign_pseudolabels(predictions, test_nodes, conf_cutoff):
         else:
             pruned_test_set.append(node)
 
-    # print("num of conf nodes: {}; avg conf: {}".format(
-    #     high_conf_nodes,
-    #     np.mean(conf_vals)))
-    
     return pruned_test_set
 
 
@@ -71,14 +60,14 @@ def compute_conf_percentiles(predictions):
     '''
     conf_vals = [p[2] for p in predictions]
     updated_preds = []
-    
+
     for n, p, c in predictions:
         conf_percentile = stats.percentileofscore(conf_vals, c)
         new_tuple = (n, p, conf_percentile)
         updated_preds.append(new_tuple)
 
     return updated_preds
-    
+
 
 def clean_nodes(node_list):
     '''
@@ -109,5 +98,5 @@ def prep_training_labelconf(node_list):
     '''
     for node in node_list:
         node.label_conf = 1.0
-    
+
     return

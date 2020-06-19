@@ -25,8 +25,12 @@ class PPINode(object):
         sorted_nodes_DSD and sorted_nodes_SP attributes contain list of
             other node names sorted by distance.
     """
-    def __init__(self, name=None, dsd_dict=None, 
-                 sp_dict=None, labels=None, label_type=None,
+    def __init__(self,
+                 name=None,
+                 dsd_dict=None,
+                 sp_dict=None,
+                 labels=None,
+                 label_type=None,
                  hierarchy_labels=None):
         """
         Sets attributes.
@@ -45,33 +49,21 @@ class PPINode(object):
 
         # keep track of votes
         self.predicted_scores = {}
-        
+
         # Distance dictionaries
         self.dsd_dict = dsd_dict
-        
+
         # Sort other nodes in graph by DSD value
         self.sorted_nodes_DSD = self._get_sorted_nodes_DSD()
-        
+
     def _get_sorted_nodes_DSD(self):
         """
         Returns list of all other node names sorted by DSD value.
         """
         if not self.dsd_dict:
             return None
-            
-        sorted_pairs = sorted(self.dsd_dict.items(), key=lambda x: x[1])
-        
-        # Only return node names
-        return [pair[0] for pair in sorted_pairs]
 
-    def _get_sorted_nodes_SP(self):
-        """
-        Returns a list of all other node names sorted by SP distance.
-        """
-        if not self.sp_dict:
-            return None
-        
-        sorted_pairs = sorted(self.sp_dict.items(), key=lambda x: x[1])
+        sorted_pairs = sorted(self.dsd_dict.items(), key=lambda x: x[1])
 
         # Only return node names
         return [pair[0] for pair in sorted_pairs]
@@ -86,30 +78,28 @@ class PPIGraph(object):
         Generate node dict and other inferred attributes.
         """
         self.node_list = np.array(node_list)
-        
+
         # define training set
         # (nodes in node_list with a known annotation)
         self.training_nodes = [
-            n for n in set(self.node_list)
-            if n.labels != []
+            n for n in set(self.node_list) if n.labels != []
         ]
-        
+
         self.label_type = label_type
         self.metric_type = metric_type
-        
+
         # Set size of graph
         self.size = len(self.node_list)
         self.training_size = len(self.training_nodes)
 
-         # Add parent Graph pointer to self on each node
+        # Add parent Graph pointer to self on each node
         for n in node_list:
             n.graph = self
-            
-        # dictionary of label descendents. 
+
+        # dictionary of label descendents.
         self.label_descendents = {}
         self.label_predecessors = {}
         self.generate_label_descendents()
-
 
     def generate_label_descendents(self):
         """
@@ -133,10 +123,11 @@ class PPIGraph(object):
             if not node.labels: continue
             for l in node.labels:
                 parts = l.split('.')
-                if len(parts) != 3: 
-                    print('len violation'); continue
+                if len(parts) != 3:
+                    print('len violation')
+                    continue
                 l1 = parts[0]
-                l2 = parts[0]+'.'+parts[1]
+                l2 = parts[0] + '.' + parts[1]
                 label_descendents[l1].add(l2)
                 label_descendents[l2].add(l)
                 label_predecessors[l] = l2

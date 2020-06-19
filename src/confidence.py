@@ -20,8 +20,6 @@ def random_conf(node, neighbors, node_dict, **kwargs):
 def count_conf(node, neighbors, node_dict, **kwargs):
     '''
     Count Method for confidence rating.
-
-    # NEEDSWORK
     '''
     pred = node.predicted_label
     total_vote_sum = 0
@@ -50,8 +48,6 @@ def weighted_count_conf(node, neighbors, node_dict, **kwargs):
     Weighted count Method for confidence rating.
 
     Should be used with WMV
-
-    # NEEDSWORK
     '''
     pred = node.predicted_label
     total_vote_sum = 0
@@ -59,11 +55,11 @@ def weighted_count_conf(node, neighbors, node_dict, **kwargs):
 
     for nb_name in neighbors:
         nb = node_dict[nb_name]
-        
+
         if node.dsd_dict[nb_name] == 0:
-            continue        
+            continue
         nb_weight = 1 / node.dsd_dict[nb_name]
-        
+
         if nb.pseudo_label:
             total_vote_sum += nb_weight
             if pred == nb.pseudo_label:
@@ -80,7 +76,6 @@ def weighted_count_conf(node, neighbors, node_dict, **kwargs):
     return prediction_conf
 
 
-
 def entropy_conf(node, neighbors, node_dict, **kwargs):
     '''
     Entropy-based confidence scoring.
@@ -92,7 +87,7 @@ def entropy_conf(node, neighbors, node_dict, **kwargs):
     total_vote_sum = 0
     pred_score = 0
     count_dict = {}
-    
+
     votes = {}
     for nb_name in neighbors:
         nb = node_dict[nb_name]
@@ -105,16 +100,18 @@ def entropy_conf(node, neighbors, node_dict, **kwargs):
 
     if not votes.values():
         return 0
-    
-    maxVotes = reduce(lambda x, y: x + y, votes.values())
-    labelsProbability = [val/maxVotes for val in votes.values()]
-    uniformProbability = [1/len(labelsProbability) for i in range(len(labelsProbability))]
 
-    entropyTotal = -np.sum(labelsProbability*np.log2(labelsProbability))
-    entropyUnif  = -np.sum(uniformProbability*np.log2(uniformProbability))
+    maxVotes = reduce(lambda x, y: x + y, votes.values())
+    labelsProbability = [val / maxVotes for val in votes.values()]
+    uniformProbability = [
+        1 / len(labelsProbability) for i in range(len(labelsProbability))
+    ]
+
+    entropyTotal = -np.sum(labelsProbability * np.log2(labelsProbability))
+    entropyUnif = -np.sum(uniformProbability * np.log2(uniformProbability))
 
     if not entropyUnif:
         return 1
 
     # print(1 - (entropyTotal/entropyUnif))
-    return (1 - (entropyTotal/entropyUnif))
+    return (1 - (entropyTotal / entropyUnif))

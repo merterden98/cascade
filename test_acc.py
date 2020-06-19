@@ -1,4 +1,3 @@
-
 """
 test_acc.py
 
@@ -13,12 +12,12 @@ from src import makegraph
 from src import vote
 from src import confidence as conf
 from src import graph
-from src import stats
 from src.crossvalidate import *
 import sys
 
 # ----------------------------------------------------------------------------
 #                         LOAD GRAPH PICKLES
+
 
 def run_combo(**kwargs):
     a = run_kfold_cv(
@@ -33,23 +32,25 @@ def run_combo(**kwargs):
 
     acc_scores = a[0]
     f1_scores = a[1]
-    
+
     kwargs['avg_acc'] = np.mean(acc_scores)
     kwargs['std_acc'] = np.std(acc_scores)
     kwargs['avg_f1'] = np.mean(f1_scores)
     kwargs['std_f1'] = np.std(f1_scores)
-    print("acc_mean: {}, acc_std: {} // f1_mean: {}, f1_std: {}".
-          format(round(np.mean(acc_scores), 4), round(np.std(acc_scores), 4),
-                 round(np.mean(f1_scores), 4), round(np.std(f1_scores), 4)))
-          
+    print("acc_mean: {}, acc_std: {} // f1_mean: {}, f1_std: {}".format(
+        round(np.mean(acc_scores), 4), round(np.std(acc_scores), 4),
+        round(np.mean(f1_scores), 4), round(np.std(f1_scores), 4)))
+
     return kwargs
+
 
 def output_results(ofname, **kwargs):
     f = open(ofname, 'w')
     s = ""
     s += "MVC - Accuracy Results\n"
     s += "{}\n\n".format(datetime.now())
-    s += "Graph type:\tS. Cerevisiae\nMetric:\t{}\n\n".format(kwargs['ppigraph'].metric_type)
+    s += "Graph type:\tS. Cerevisiae\nMetric:\t{}\n\n".format(
+        kwargs['ppigraph'].metric_type)
     s += "Labels\t {}\n\n".format(kwargs['labels'])
     s += "Voting algorithm:\t{}\n".format(kwargs['voting_func'])
     s += "Neighbor type:\t{}\n".format(kwargs['nb_type'])
@@ -66,6 +67,7 @@ def output_results(ofname, **kwargs):
     f.close()
     return
 
+
 func_names = {
     vote.mv: "MV",
     vote.wmv: "WMV",
@@ -78,20 +80,21 @@ func_names = {
 }
 
 
-def generate_filename(voting_func, conf_func, threshold, labels, folds, nb_type, casc_rounds, metric="DSD"):
+def generate_filename(voting_func,
+                      conf_func,
+                      threshold,
+                      labels,
+                      folds,
+                      nb_type,
+                      casc_rounds,
+                      metric="DSD"):
     vote = func_names[voting_func]
     conf = func_names[conf_func]
     threshold *= 100
-    fname = "acc.{}.{}.{}.{}.{}.{}r.{}f.{}.txt".format(
-        labels,
-        metric,
-        vote,
-        conf,
-        int(threshold),
-        casc_rounds,
-        folds,
-        nb_type
-    )
+    fname = "acc.{}.{}.{}.{}.{}.{}r.{}f.{}.txt".format(labels, metric, vote,
+                                                       conf, int(threshold),
+                                                       casc_rounds, folds,
+                                                       nb_type)
     return fname
 
 
@@ -103,9 +106,8 @@ def main(argv):
     from src import vote
     from src import confidence as conf
     from src import graph
-    from src import stats
     import sys
-    
+
     flight = int(argv[1])
     print(flight)
 
@@ -130,9 +132,8 @@ def main(argv):
     # cdsd_FLY_gomfbp3_l5_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_infL5_35170.pkl", 'rb'))
     # cdsd_FLY_gomfbp3_l6_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_infL6_35170.pkl", 'rb'))
 
-    
     # ------ SUPP TABLES: YEAST -------
-    
+
     if flight == 10:
         cdsd_mips1 = pickle.load(open("pickles/cdsd_mips1_35170.pkl", 'rb'))
         print("# FLIGHT 1: yeast - MIPS1 - EC - baseline")
@@ -205,10 +206,10 @@ def main(argv):
         nb_types = ['known', 'all']
         OUTPUT_DIR = "raw_results/flight31/"
 
-
     if flight == 40:
         print("# FLIGHT 4: yeast - GOmfbp_l4 - EC - baseline")
-        cdsd_gomfbp3_inf = pickle.load(open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_gomfbp3_inf]
         voting_funcs = [vote.mv, vote.wmv]
@@ -219,7 +220,8 @@ def main(argv):
         OUTPUT_DIR = "raw_results/flight40/"
 
     if flight == 41:
-        cdsd_gomfbp3_inf = pickle.load(open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
         print("# FLIGHT 4: yeast - GOmfbp_l4 - EC - cascade")
         folds = [2, 4, 6]
         graph_objs = [cdsd_gomfbp3_inf]
@@ -232,7 +234,8 @@ def main(argv):
 
     if flight == 50:
         print("# FLIGHT 4: fly - GOmfbp_l4 - EC - baseline")
-        cdsd_FLY_gomfbp3_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_FLY_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_FLY_gomfbp3_inf]
         voting_funcs = [vote.mv, vote.wmv]
@@ -244,7 +247,8 @@ def main(argv):
 
     if flight == 51:
         print("# FLIGHT 4: fly - GOmfbp_l4 - EC - cascade")
-        cdsd_FLY_gomfbp3_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_FLY_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_FLY_gomfbp3_inf]
         voting_funcs = [vote.mv, vote.wmv]
@@ -256,7 +260,8 @@ def main(argv):
 
     if flight == 60:
         print("# FLIGHT 6: fly - GOmfbp_l4 - EC - baseline")
-        cdsd_FLY_gomfbp3_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_FLY_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_FLY_gomfbp3_inf]
         voting_funcs = [vote.mv, vote.wmv]
@@ -268,7 +273,8 @@ def main(argv):
 
     if flight == 61:
         print("# FLIGHT 6: fly - GOmfbp_l4 - EC - cascade")
-        cdsd_FLY_gomfbp3_inf = pickle.load(open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_FLY_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_FLY_gomfbp3_inf_35170.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_FLY_gomfbp3_inf]
         voting_funcs = [vote.mv, vote.wmv]
@@ -283,7 +289,8 @@ def main(argv):
         cdsd_mips1 = pickle.load(open("pickles/cdsd_mips1_35170.pkl", 'rb'))
         cdsd_mips2 = pickle.load(open("pickles/cdsd_mips2_35170.pkl", 'rb'))
         cdsd_mips3 = pickle.load(open("pickles/cdsd_mips3_35170.pkl", 'rb'))
-        cdsd_gomfbp3_inf = pickle.load(open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
         print("# SUPP FLIGHT: yeast - CC - 12 - 35%")
         folds = [2, 4, 6]
         graph_objs = [cdsd_mips1, cdsd_mips2, cdsd_mips3, cdsd_gomfbp3_inf]
@@ -298,7 +305,8 @@ def main(argv):
         cdsd_mips1 = pickle.load(open("pickles/cdsd_mips1_35170.pkl", 'rb'))
         cdsd_mips2 = pickle.load(open("pickles/cdsd_mips2_35170.pkl", 'rb'))
         cdsd_mips3 = pickle.load(open("pickles/cdsd_mips3_35170.pkl", 'rb'))
-        cdsd_gomfbp3_inf = pickle.load(open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
+        cdsd_gomfbp3_inf = pickle.load(
+            open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
         print("# SUPP FLIGHT: yeast - CC - 12 - 35%")
         folds = [2, 4, 6]
         graph_objs = [cdsd_mips1, cdsd_mips2, cdsd_mips3, cdsd_gomfbp3_inf]
@@ -312,7 +320,8 @@ def main(argv):
     # STRING DATABASE
     if flight == 80:
         print("# FLIGHT 8: yeast - GOmfbp_l4 - EC - baseline")
-        cdsd_gomfbp3_l4_inf_str = pickle.load(open("cdsd_gomfbp3_infL4_4932.pkl", 'rb'))
+        cdsd_gomfbp3_l4_inf_str = pickle.load(
+            open("cdsd_gomfbp3_infL4_4932.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_gomfbp3_l4_inf_str]
         voting_funcs = [vote.mv, vote.wmv]
@@ -324,7 +333,8 @@ def main(argv):
 
     if flight == 81:
         print("# FLIGHT 8: yeast - GOmfbp_l4 - EC - cascade")
-        cdsd_gomfbp3_l4_inf_str = pickle.load(open("cdsd_gomfbp3_infL4_4932.pkl", 'rb'))
+        cdsd_gomfbp3_l4_inf_str = pickle.load(
+            open("cdsd_gomfbp3_infL4_4932.pkl", 'rb'))
         folds = [2, 4, 6]
         graph_objs = [cdsd_gomfbp3_l4_inf_str]
         voting_funcs = [vote.mv, vote.wmv]
@@ -394,7 +404,7 @@ def main(argv):
         print("# FLIGHT 11: yeast - MIPS3 - EC - baseline")
         folds = [2, 4, 6]
         graph_objs = [cdsd_mips3]
-        voting_funcs = [vote. wmv, vote.wmv_hierarchy]
+        voting_funcs = [vote.wmv, vote.wmv_hierarchy]
         conf_funcs = [conf.entropy_conf]
         conf_thresholds = [0.35]
         casc_rounds = [1]
@@ -446,16 +456,18 @@ def main(argv):
                     for r in casc_rounds:
                         for fold in folds:
                             for nb_type in nb_types:
-                                print("Running acc test for: {} - {} - {} - {} - {} - {}r - {}f - {}".format(
-                                    graph.metric_type,
-                                    graph.label_type,
-                                    vote.__name__,
-                                    conf.__name__,
-                                    thres,
-                                    r,
-                                    fold,
-                                    nb_type,
-                                ))
+                                print(
+                                    "Running acc test for: {} - {} - {} - {} - {} - {}r - {}f - {}"
+                                    .format(
+                                        graph.metric_type,
+                                        graph.label_type,
+                                        vote.__name__,
+                                        conf.__name__,
+                                        thres,
+                                        r,
+                                        fold,
+                                        nb_type,
+                                    ))
                                 ofname = generate_filename(
                                     vote,
                                     conf,
@@ -467,7 +479,7 @@ def main(argv):
                                     metric=graph.metric_type,
                                 )
                                 ofname = "{}{}".format(OUTPUT_DIR, ofname)
-                                
+
                                 kwargs = {
                                     'ppigraph': graph,
                                     'cv_splits': fold,
@@ -480,7 +492,7 @@ def main(argv):
                                 }
                                 kwargs = run_combo(**kwargs)
                                 output_results(ofname, **kwargs)
-                                
-                                                                                               
+
+
 if __name__ == "__main__":
     main(sys.argv)

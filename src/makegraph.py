@@ -49,7 +49,7 @@ def load_GOlabels(labels_fname):
         name = row_parts[0]
         labels = row_parts[1:]
         labels_dict[name] = labels
-    
+
     return labels_dict
 
 
@@ -70,14 +70,14 @@ def load_dsd_matrix(dsd_fname, labels_dict):
         data = [row for row in csv_reader]
 
     full_node_list = []
-    
+
     # Split DSD data into headers and rows
     headers = data[0][1:]
     rows = data[1:]
 
     # Extract name and DSD values for each node
     for i, row in enumerate(rows):
-        
+
         # Unpack row
         name = row[0]
         dsd_list = row[1:]
@@ -85,8 +85,8 @@ def load_dsd_matrix(dsd_fname, labels_dict):
         # Prepare dict of DSD values for given node
         # Add every other node, value pair (converted to float)
         # Only add node if label is known and has non empty labels list
-        vals_dict  = {}
-        for j, val in enumerate(dsd_list): 
+        vals_dict = {}
+        for j, val in enumerate(dsd_list):
             other_node = headers[j]
 
             if other_node in labels_dict:
@@ -99,7 +99,9 @@ def load_dsd_matrix(dsd_fname, labels_dict):
     return full_node_list
 
 
-def format_nodes_DSD(node_list=None, labels_dict=None, label_type=None,
+def format_nodes_DSD(node_list=None,
+                     labels_dict=None,
+                     label_type=None,
                      hierarchy_labels_dict=None):
     """
     Maps nodes with DSD values and corresponding function labels 
@@ -113,54 +115,53 @@ def format_nodes_DSD(node_list=None, labels_dict=None, label_type=None,
     Returns:
         List of `PPINode` objects.
     """
-    
+
     # Map nodes from DSD matrix with function labels in labels_dict
     new_graph = []
-    
+
     for n in node_list:
-        
+
         # Unpack rows in node_list
         name = n[0]
         dsd_vals_dict = n[1]
-        
+
         # Get corresponding function labels
         try:
             node_labels = labels_dict[name]
         except KeyError:
             node_labels = []
-            
-        
+
         node_hierarchy_labels = {}
-        # Build dictionary of hierachical labels for node 
+        # Build dictionary of hierachical labels for node
         for i, ld in hierarchy_labels_dict.items():
             try:
                 h_node_labels = ld[name]
             except KeyError:
                 h_node_labels = []
             node_hierarchy_labels[i] = h_node_labels
-            
-            
+
         ## ONLY ADD NODES WITH KNOWN LABELS ##
         # if not node_labels:
         #     continue
-            
+
         # Create PPINode object
-        node_obj = graph.PPINode(
-            name=name,
-            dsd_dict=dsd_vals_dict,
-            labels=node_labels,
-            label_type=label_type,
-            hierarchy_labels=node_hierarchy_labels
-        )
+        node_obj = graph.PPINode(name=name,
+                                 dsd_dict=dsd_vals_dict,
+                                 labels=node_labels,
+                                 label_type=label_type,
+                                 hierarchy_labels=node_hierarchy_labels)
 
         new_graph.append(node_obj)
 
     return new_graph
 
 
-def generate_graph_DSD(dsd_filename=None, labels_filename=None,
-                       label_type=None, hierarchy_labels=None,
-                       metric_type='DSD', custom_node_list_generator=None):
+def generate_graph_DSD(dsd_filename=None,
+                       labels_filename=None,
+                       label_type=None,
+                       hierarchy_labels=None,
+                       metric_type='DSD',
+                       custom_node_list_generator=None):
     """
     Generates PPIGraph object containing PPINodes for graphs using
     DSD metric values.
@@ -184,7 +185,8 @@ def generate_graph_DSD(dsd_filename=None, labels_filename=None,
         node_list = load_dsd_matrix(dsd_filename, labels_dict)
         print(node_list[0])
     else:
-        print("Using custom {} metric to generate node list".format(metric_type))
+        print(
+            "Using custom {} metric to generate node list".format(metric_type))
         node_list = custom_node_list_generator(dsd_filename, labels_dict)
 
     # Create PPINode objects
@@ -194,8 +196,8 @@ def generate_graph_DSD(dsd_filename=None, labels_filename=None,
         labels_dict=labels_dict,
         label_type=label_type,
         hierarchy_labels_dict=hierarchy_labels_dict,
-    )    
-    
+    )
+
     # Create PPIGraph object
     print("Creating new PPIGraph")
     new_PPIGraph = graph.PPIGraph(
@@ -206,10 +208,14 @@ def generate_graph_DSD(dsd_filename=None, labels_filename=None,
 
     return new_PPIGraph
 
-def getPPIGraph(matrix_filename, labels_filename, label_type, 
-                 heirarchy_labels, metric_type, custom_node_list_generator):
 
-    return generate_graph_DSD(dsd_filename=matrix_filename, labels_filename=labels_filename,
-                              label_type=label_type, heirarchy_labels=heirarchy_labels,
-                              metric_type=metric_type, 
-                              custom_node_list_generator=custom_node_list_generator)
+def getPPIGraph(matrix_filename, labels_filename, label_type, hierarchy_labels,
+                metric_type, custom_node_list_generator):
+
+    return generate_graph_DSD(
+        dsd_filename=matrix_filename,
+        labels_filename=labels_filename,
+        label_type=label_type,
+        hierarchy_labels=hierarchy_labels,
+        metric_type=metric_type,
+        custom_node_list_generator=custom_node_list_generator)

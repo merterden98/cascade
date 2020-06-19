@@ -1,4 +1,4 @@
-B1;5202;0c'''
+'''
 crossvalidate.py
 
 '''
@@ -7,11 +7,17 @@ import numpy as np
 from . import graph
 from . import vote
 from . import cascade
-from . import confidence as conf    
+from . import confidence as conf
 
-def run_kfold_cv(ppigraph=None, cv_splits=3, voting_func=vote.mv,
-                 conf_func=conf.count_conf, K=10, nb_type='all',
-                 cascade_rounds=10, conf_threshold=0.30):
+
+def run_kfold_cv(ppigraph,
+                 cv_splits=3,
+                 voting_func=vote.mv,
+                 conf_func=conf.count_conf,
+                 K=10,
+                 nb_type='all',
+                 cascade_rounds=10,
+                 conf_threshold=0.30):
     '''
     Run 10 rounds of k-fold cross validation, where the number of test
     instances exceeds the number of training instances.
@@ -25,8 +31,8 @@ def run_kfold_cv(ppigraph=None, cv_splits=3, voting_func=vote.mv,
     for r in range(10):
         cv_round_acc = []
         cv_round_f1 = []
-        
-        print("CV round: {}/10".format(r+1))
+
+        print("CV round: {}/10".format(r + 1))
 
         # Genearte random partition for CV
         node_indices = [i for i in range(training_size)]
@@ -38,14 +44,15 @@ def run_kfold_cv(ppigraph=None, cv_splits=3, voting_func=vote.mv,
 
             # Partition nodes into train / test splits
             train_nodes = set([
-                training_list[j] for j in
-                node_indices[i*train_fold_size:(i+1)*train_fold_size]
+                training_list[j]
+                for j in node_indices[i * train_fold_size:(i + 1) *
+                                      train_fold_size]
             ])
             test_nodes = [n for n in node_list if n not in train_nodes]
 
             # Prepare label_conf weights for training nodes
             cascade.prep_training_labelconf(list(train_nodes))
-            
+
             # Run a single round of CV
             cv_round(
                 ppigraph=ppigraph,
@@ -66,7 +73,7 @@ def run_kfold_cv(ppigraph=None, cv_splits=3, voting_func=vote.mv,
             # calculate f1 per fold
             fold_f1 = calc_f1(test_nodes, alpha=3)
             cv_round_f1.append(fold_f1)
-        
+
         avg_fold_acc = np.mean(cv_round_acc)
         avg_fold_f1 = np.mean(cv_round_f1)
         accuracy_scores.append(avg_fold_acc)
@@ -76,8 +83,14 @@ def run_kfold_cv(ppigraph=None, cv_splits=3, voting_func=vote.mv,
     return [accuracy_scores, f1_scores]
 
 
-def cv_round(ppigraph=None, test_nodes=None, voting_func=None, conf_func=None,
-             K=10, nb_type='all', cascade_rounds=10, conf_threshold=0.30):
+def cv_round(ppigraph=None,
+             test_nodes=None,
+             voting_func=None,
+             conf_func=None,
+             K=10,
+             nb_type='all',
+             cascade_rounds=10,
+             conf_threshold=0.30):
     '''
     Make predictions and perform cascading on given set of test set nodes.
 
@@ -87,7 +100,7 @@ def cv_round(ppigraph=None, test_nodes=None, voting_func=None, conf_func=None,
         # clear prediction dict for all test nodes
         for node in test_nodes:
             node.votes = {}
-        
+
         predictions = vote.vote(
             ppigraph=ppigraph,
             K=10,
@@ -96,22 +109,22 @@ def cv_round(ppigraph=None, test_nodes=None, voting_func=None, conf_func=None,
             conf_func=conf_func,
             nb_type=nb_type,
             c_round=r,
-        ) # returns (node, pred, conf) tuples
+        )  # returns (node, pred, conf) tuples
 
         # compute pred conf values into percentiles
         # predictions = cascade.compute_conf_percentiles(predictions)
         # conf_cutoff = 1 - conf_threshold
-        
-        conf_cutoff = cascade.compute_cc(predictions, conf_percent=conf_threshold)
+
+        conf_cutoff = cascade.compute_cc(predictions,
+                                         conf_percent=conf_threshold)
         # Continue to cascade with lowest non-zero conf val if conf_cutoff = 0
         if not conf_cutoff:
             conf_vals = [p[2] for p in predictions if p[2] > 0]
             if not conf_vals: break
             conf_vals.sort()
-            conf_cutoff = conf_vals[0]        
-            
-        test_nodes = cascade.assign_pseudolabels(predictions,
-                                                 test_nodes,
+            conf_cutoff = conf_vals[0]
+
+        test_nodes = cascade.assign_pseudolabels(predictions, test_nodes,
                                                  conf_cutoff)
 
     return conf_cutoff
@@ -130,7 +143,7 @@ def calc_accuracy(node_list):
             num_nodes += 1
             if node.predicted_label in node.labels:
                 correct += 1
-            
+
     return correct / num_nodes
 
 
@@ -139,21 +152,21 @@ def calc_f1(node_list, alpha=3):
     Compute F1 score on node_list
     '''
     eval_list = [n for n in node_list if n.labels != None]
-    
-    all_true_labels = 0 # sum of true positive, false negatives
-    predict = 0 # sum of true positives, false positives
-    correct = 0 # true positives
+
+    all_true_labels = 0  # sum of true positive, false negatives
+    predict = 0  # sum of true positives, false positives
+    correct = 0  # true positives
 
     for n in eval_list:
-        all_true_labels += len(n.labels) 
-        top_preds = top_alpha_preds(n, alpha=3)        
+        all_true_labels += len(n.labels)
+        top_preds = top_alpha_preds(n, alpha=3)
         predict += len(top_preds)
         for l in top_preds:
             if l in n.labels:
                 correct += 1
     prec = float(correct) / float(predict)
     recall = float(correct) / float(all_true_labels)
-        
+
     f1 = (2 * prec * recall) / (prec + recall)
     return f1
 
@@ -197,9 +210,9 @@ def top_alpha_preds(node, alpha=3):
     Count top alpha predicted labels given a node and its vote dict.
     '''
     labels_sorted = sorted([(l, score) for l, score in node.votes.items()],
-                           key=lambda x: x[1], reverse=True)
+                           key=lambda x: x[1],
+                           reverse=True)
     top_labels = [l[0] for l in labels_sorted[:alpha]]
-
 
     # print(labels_sorted)
 
@@ -259,21 +272,27 @@ def calc_recall(node_list, label, alpha=3):
         recall = true_pos / (true_pos + false_neg)
 
     return recall
-                
 
-def run_conf_dist_analysis(ppigraph=None, cv_splits=2, voting_func=vote.mv,
-                           conf_func=conf.count_conf, K=10, nb_type='all',
-                           cascade_rounds=1, conf_threshold=0.30):
+
+def run_conf_dist_analysis(ppigraph=None,
+                           cv_splits=2,
+                           voting_func=vote.mv,
+                           conf_func=conf.count_conf,
+                           K=10,
+                           nb_type='all',
+                           cascade_rounds=1,
+                           conf_threshold=0.30):
     '''
     Run analysis of confidence scoring distribution for a given CV-fold type.
 
     #NEEDSWORK
     '''
-    node_list = ppigraph.training_nodes # use only nodes with known annotations
+    node_list = ppigraph.training_nodes  # use only nodes with known annotations
     num_nodes = ppigraph.training_size
     confidence_splits = []
     for r in range(10):
-        print("Confidence score distribution analysis, round {}/10".format(r+1))
+        print("Confidence score distribution analysis, round {}/10".format(r +
+                                                                           1))
 
         node_indices = [i for i in range(num_nodes)]
         random.shuffle(node_indices)
@@ -283,13 +302,13 @@ def run_conf_dist_analysis(ppigraph=None, cv_splits=2, voting_func=vote.mv,
         round_low_conf_acc = 0
         for i in range(cv_splits):
             train_nodes = set([
-                node_list[j] for j in
-                node_indices[i*test_fold_size:(i+1)*test_fold_size]
+                node_list[j] for j in node_indices[i * test_fold_size:(i + 1) *
+                                                   test_fold_size]
             ])
             test_nodes = [n for n in node_list if n not in train_nodes]
 
             cascade.prep_training_labelconf(list(train_nodes))
-            
+
             print(len(test_nodes))
             conf_cutoff = cv_round(
                 ppigraph=ppigraph,
@@ -303,8 +322,12 @@ def run_conf_dist_analysis(ppigraph=None, cv_splits=2, voting_func=vote.mv,
             )
             cascade.reset_pseudolabels(test_nodes)
 
-            high_conf_nodes = [n for n in test_nodes if n.conf_score >= conf_cutoff]
-            low_conf_nodes = [n for n in test_nodes if n.conf_score <= conf_cutoff]
+            high_conf_nodes = [
+                n for n in test_nodes if n.conf_score >= conf_cutoff
+            ]
+            low_conf_nodes = [
+                n for n in test_nodes if n.conf_score <= conf_cutoff
+            ]
             high_conf_correct = 0
             low_conf_correct = 0
             for n in high_conf_nodes:
@@ -321,88 +344,5 @@ def run_conf_dist_analysis(ppigraph=None, cv_splits=2, voting_func=vote.mv,
         round_low_conf_avg = round_low_conf_acc / cv_splits
         confidence_splits.append((round_high_conf_avg, round_low_conf_avg))
         cascade.clean_nodes(node_list)
-        
+
     return confidence_splits
-
-#### NOT IN USE: ######
-
-def run_cv(ppigraph=None, voting_func=vote.mv, conf_func=conf.count_conf,
-           K=10, nb_type='all', cascade_rounds=10, conf_threshold=0.30):
-    '''
-    Run 10 rounds of 2-fold cross validation.
-
-    #NEEDSWORK
-    '''
-    accuracy_scores = []
-    node_list = ppigraph.node_list
-    num_nodes = ppigraph.size
-
-    # For 10 rounds, get a random 2-fold split and run CV
-    for r in range(10):
-        print("CV round: {}/10".format(r))
-        fold1_ids = random.sample(range(num_nodes), int(num_nodes/2))
-        fold1_nodes = [node_list[i] for i in fold1_ids]
-        fold2_ids = [i for i in range(num_nodes) if i not in fold1_ids]
-        fold2_nodes = [node_list[i] for i in fold2_ids]
-        
-        cv_round(
-            ppigraph=ppigraph,
-            test_nodes=fold1_nodes,
-            voting_func=voting_func,
-            conf_func=conf_func,
-            K=K,
-            nb_type=nb_type,
-            cascade_rounds=cascade_rounds,
-            conf_threshold=conf_threshold, 
-        )
-        
-        cascade.reset_pseudolabels(fold1_nodes)
-
-        cv_round(
-            ppigraph=ppigraph,
-            test_nodes=fold2_nodes,
-            voting_func=voting_func,
-            conf_func=conf_func,
-            K=K,
-            nb_type=nb_type,
-            cascade_rounds=cascade_rounds,
-            conf_threshold=conf_threshold,
-        )
-
-        # Compute more stats here
-        accuracy = calc_accuracy(node_list)
-        accuracy_scores.append(accuracy)
-        cascade.clean_nodes(node_list)
-        
-    return accuracy_scores
-
-
-def run_LOO(ppigraph=None, voting_func=vote.mv, conf_func=conf.count_conf,
-            K=10, nb_type='all', conf_threshold=0.30):
-    '''
-    Run LOO cross validation given a ppigraph, voting func. 
-
-    Cascading parameters passed for use with cv_round function, but 
-    don't have significance in LOO testing.
-    
-    '''
-    print("Running LOO cross validation")
-    node_list = ppigraph.training_nodes
-    cascade.prep_training_labelconf(node_list)
-    for n in node_list:
-        cv_round(
-            ppigraph=ppigraph,
-            test_nodes=[n],
-            voting_func=voting_func,
-            conf_func=conf_func,
-            K=K,
-            nb_type=nb_type,
-            conf_threshold=conf_threshold,
-            cascade_rounds=1
-        )
-    # Compute more stats here
-    accuracy = calc_accuracy(node_list)
-    # cascade.clean_nodes(node_list)
-    
-    return accuracy
- 
