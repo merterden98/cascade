@@ -2,3 +2,4 @@ cDSD/
 data/
 raw_result/
 pickles/
+__pycache__/
