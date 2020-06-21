@@ -8,9 +8,10 @@ import csv
 import numpy as np
 import pprint
 from . import graph
+from functools import reduce
 
 
-def load_labels(labels_fname, tabs=False):
+def load_labels(labels_fname):
     """
     Load file of function labels and formats data into dictionary of 
     node name, labels list pairs.
@@ -27,7 +28,6 @@ def load_labels(labels_fname, tabs=False):
         row_parts = [s for s in row_string if s is not '']
         name = row_parts[0]
         labels = [l for l in row_parts[1:] if l is not '#']
-        # labels = [(l, labels_fname) for l in row_parts[1:] if l is not '#']
         labels_dict[name] = labels
 
     return labels_dict
@@ -51,6 +51,41 @@ def load_GOlabels(labels_fname):
         labels_dict[name] = labels
 
     return labels_dict
+
+
+def mips_from_length(label_list):
+    if not label_list:
+        return "UNKNOWN"
+    else:
+        if len(label_list[0]) == 2:
+            return "1"
+        elif len(label_list[0]) == 5:
+            return "2"
+        elif len(label_list[0]) == 8:
+            return "3"
+    return "UNKNOWN"
+
+
+def merge_hierarchy_labels(hierarchy_labels_dict_list):
+
+    for label_dict in hierarchy_labels_dict_list:
+        for protein_name in label_dict.keys():
+            #Creates  [(MIPS_LEVEL, LABEL_LIST)] for every protein
+            label_dict[protein_name] = list(
+                (mips_from_length(label_dict[protein_name]),
+                 label_dict[protein_name]))
+
+    def merge(accum, new_dict):
+        if not accum:
+            return new_dict
+        else:
+            for key in accum.keys():
+                if key in new_dict:
+                    prev = accum[key]
+                    accum[key] = prev + new_dict[key]
+            return accum
+
+    return reduce(merge, hierarchy_labels_dict_list, {})
 
 
 def load_dsd_matrix(dsd_fname, labels_dict):
@@ -131,37 +166,26 @@ def format_nodes_DSD(node_list=None,
         except KeyError:
             node_labels = []
 
-        node_hierarchy_labels = {}
-        # Build dictionary of hierachical labels for node
-        for i, ld in hierarchy_labels_dict.items():
-            try:
-                h_node_labels = ld[name]
-            except KeyError:
-                h_node_labels = []
-            node_hierarchy_labels[i] = h_node_labels
-
-        ## ONLY ADD NODES WITH KNOWN LABELS ##
-        # if not node_labels:
-        #     continue
-
+        hierarchy_labels = []
+        if name in hierarchy_labels_dict:
+            hierarchy_labels = hierarchy_labels_dict[name]
         # Create PPINode object
         node_obj = graph.PPINode(name=name,
                                  dsd_dict=dsd_vals_dict,
                                  labels=node_labels,
                                  label_type=label_type,
-                                 hierarchy_labels=node_hierarchy_labels)
+                                 hierarchy_labels=hierarchy_labels)
 
         new_graph.append(node_obj)
 
     return new_graph
 
 
-def generate_graph_DSD(dsd_filename=None,
-                       labels_filename=None,
-                       label_type=None,
-                       hierarchy_labels=None,
-                       metric_type='DSD',
-                       custom_node_list_generator=None):
+def generate_graph_DSD(dsd_filename,
+                       labels_filename,
+                       label_type,
+                       hierarchy_labels_dict=None,
+                       metric_type='DSD'):
     """
     Generates PPIGraph object containing PPINodes for graphs using
     DSD metric values.
@@ -173,49 +197,41 @@ def generate_graph_DSD(dsd_filename=None,
     else:
         labels_dict = load_labels(labels_filename)
 
-        # load hierarchical labels
-        hierarchy_labels_dict = {}
-        if hierarchy_labels:
-            for i, fname in enumerate(hierarchy_labels):
-                hierarchy_labels_dict[i] = load_labels(fname)
-
     if metric_type == 'DSD':
         # Load DSD matrix and format list of nodes
         print("Loading DSD file and preparing DSD dicts")
         node_list = load_dsd_matrix(dsd_filename, labels_dict)
-        print(node_list[0])
-    else:
-        print(
-            "Using custom {} metric to generate node list".format(metric_type))
-        node_list = custom_node_list_generator(dsd_filename, labels_dict)
 
     # Create PPINode objects
     print("Formatting PPINodes")
-    ppi_nodes = format_nodes_DSD(
-        node_list=node_list,
-        labels_dict=labels_dict,
-        label_type=label_type,
-        hierarchy_labels_dict=hierarchy_labels_dict,
-    )
+    ppi_nodes = format_nodes_DSD(node_list=node_list,
+                                 labels_dict=labels_dict,
+                                 label_type=label_type,
+                                 hierarchy_labels_dict=hierarchy_labels_dict)
 
     # Create PPIGraph object
     print("Creating new PPIGraph")
-    new_PPIGraph = graph.PPIGraph(
-        node_list=ppi_nodes,
-        label_type=label_type,
-        metric_type=metric_type,
-    )
+    new_PPIGraph = graph.PPIGraph(node_list=ppi_nodes,
+                                  label_type=label_type,
+                                  metric_type=metric_type)
 
     return new_PPIGraph
 
 
-def getPPIGraph(matrix_filename, labels_filename, label_type, hierarchy_labels,
-                metric_type, custom_node_list_generator):
+def getPPIGraph(matrix_filename, labels_filename, label_type, metric_type,
+                hierarchy_files):
+
+    hierarchy_labels_dict_list = []
+    if hierarchy_files:
+        hierarchy_labels_dict_list = [
+            load_labels(hfile) for hfile in hierarchy_files
+        ]
+        merged_hierarchy_labels_dict = merge_hierarchy_labels(
+            hierarchy_labels_dict_list)
 
     return generate_graph_DSD(
         dsd_filename=matrix_filename,
         labels_filename=labels_filename,
         label_type=label_type,
-        hierarchy_labels=hierarchy_labels,
         metric_type=metric_type,
-        custom_node_list_generator=custom_node_list_generator)
+        hierarchy_labels_dict=merged_hierarchy_labels_dict)

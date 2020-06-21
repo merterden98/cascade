@@ -85,6 +85,9 @@ class PPIGraph(object):
             n for n in set(self.node_list) if n.labels != []
         ]
 
+        self.unlabelled_nodes = list(
+            set(self.node_list).difference(set(self.training_nodes)))
+
         self.label_type = label_type
         self.metric_type = metric_type
 
@@ -96,42 +99,5 @@ class PPIGraph(object):
         for n in node_list:
             n.graph = self
 
-        # dictionary of label descendents.
-        self.label_descendents = {}
-        self.label_predecessors = {}
-        self.generate_label_descendents()
-
-    def generate_label_descendents(self):
-        """
-        Generate dictionary of label descendents based on set of labels
-        in node_list.
-
-        2019.7.17: hard-coded for mips level3
-        """
-        label_descendents = self.label_descendents
-        label_predecessors = self.label_predecessors
-
-        # Add all labels to label_descendents dict
-        for node in self.node_list:
-            node_hierarchy_labels = node.hierarchy_labels
-            for labels_list in node_hierarchy_labels.values():
-                for l in labels_list:
-                    if l not in label_descendents:
-                        label_descendents[l] = set()
-
-        for node in self.node_list:
-            if not node.labels: continue
-            for l in node.labels:
-                parts = l.split('.')
-                if len(parts) != 3:
-                    print('len violation')
-                    continue
-                l1 = parts[0]
-                l2 = parts[0] + '.' + parts[1]
-                label_descendents[l1].add(l2)
-                label_descendents[l2].add(l)
-                label_predecessors[l] = l2
-                label_predecessors[l2] = l1
-
-        for l, d in label_descendents.items():
-            label_descendents[l] = list(d)
+    def get_unlabelled_nodes(self):
+        return self.unlabelled_nodes

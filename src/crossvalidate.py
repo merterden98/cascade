@@ -4,10 +4,18 @@ crossvalidate.py
 '''
 import random
 import numpy as np
+from datetime import datetime
 from . import graph
 from . import vote
 from . import cascade
 from . import confidence as conf
+
+VOTE_MAP = {'MV': vote.mv, 'WMV': vote.wmv, 'MVH': vote.mv_hierarchy}
+CONF_MAP = {
+    'ENT': conf.entropy_conf,
+    'CT': conf.count_conf,
+    'WCT': conf.weighted_count_conf
+}
 
 
 def run_kfold_cv(ppigraph,
@@ -346,3 +354,155 @@ def run_conf_dist_analysis(ppigraph=None,
         cascade.clean_nodes(node_list)
 
     return confidence_splits
+
+
+def generate_filename(voting_func,
+                      conf_func,
+                      threshold,
+                      labels,
+                      folds,
+                      nb_type,
+                      casc_rounds,
+                      metric="DSD"):
+    vote = voting_func
+    conf = conf_func
+    threshold *= 100
+    fname = "acc.{}.{}.{}.{}.{}.{}r.{}f.{}.txt".format(labels, metric, vote,
+                                                       conf, int(threshold),
+                                                       casc_rounds, folds,
+                                                       nb_type)
+    return fname
+
+
+def output_results(ofname, **kwargs):
+    f = open(ofname, 'w')
+    s = ""
+    s += "MVC - Accuracy Results\n"
+    s += "{}\n\n".format(datetime.now())
+    s += "Graph type:\tS. Cerevisiae\nMetric:\t{}\n\n".format(
+        kwargs['ppigraph'])
+    s += "Labels\t {}\n\n".format(kwargs['labels'])
+    s += "Voting algorithm:\t{}\n".format(kwargs['voting_func'])
+    s += "Neighbor type:\t{}\n".format(kwargs['nb_type'])
+    s += "CV splits:\t{}\n".format(kwargs['cv_splits'])
+    s += "Conf. algorithm:\t{}\n".format(kwargs['conf_func'])
+    s += "Conf. threshold:\t{}\n".format(kwargs['conf_threshold'])
+    s += "Cascade rounds: \t{}\n\n".format(kwargs['cascade_rounds'])
+    s += "Average accuracy: \t{}\n".format(kwargs['avg_acc'])
+    s += "Std dev accuracy: \t{}\n\n".format(kwargs['std_acc'])
+    s += "Average F1 score: \t{}\n".format(kwargs['avg_f1'])
+    s += "Std dev F1 score: \t{}\n\n".format(kwargs['std_f1'])
+    s += "Acc. values measured using 10 rounds of CV\n"
+    f.write(s)
+    f.close()
+    return
+
+
+def predict(ppigraph=None,
+            voting_type=None,
+            conf_type=None,
+            K=10,
+            nb_type='all',
+            cascade_rounds=10,
+            conf_threshold=0.30):
+
+    unlabelled_nodes = ppigraph.get_unlabelled_nodes()
+    voting_func = VOTE_MAP[voting_type]
+    conf_func = CONF_MAP[conf_type]
+
+    for r in range(cascade_rounds):
+
+        # clear prediction dict for all test nodes
+        for node in unlabelled_nodes:
+            node.votes = {}
+
+        predictions = vote.vote(
+            ppigraph=ppigraph,
+            K=10,
+            predict_nodes=unlabelled_nodes,
+            voting_func=voting_func,
+            conf_func=conf_func,
+            nb_type=nb_type,
+            c_round=r,
+        )  # returns (node, pred, conf) tuples
+
+        conf_cutoff = cascade.compute_cc(predictions,
+                                         conf_percent=conf_threshold)
+
+        if not conf_cutoff:
+            conf_vals = [p[2] for p in predictions if p[2] > 0]
+            if not conf_vals: break
+            conf_vals.sort()
+            conf_cutoff = conf_vals[0]
+
+        unlabelled_nodes = cascade.assign_pseudolabels(predictions,
+                                                       unlabelled_nodes,
+                                                       conf_cutoff)
+
+
+def run_cv_tests(ppigraph=None,
+                 voting_type=None,
+                 conf_type=None,
+                 K=10,
+                 outfile='./',
+                 nb_type='all',
+                 cascade_rounds=10,
+                 conf_threshold=0.30,
+                 cv_splits=2,
+                 labels="MIPS"):
+
+    print(
+        "Running acc test for: {} - {} - {} - {} - {} - {}r - {}f - {}".format(
+            ppigraph.metric_type,
+            ppigraph.label_type,
+            voting_type,
+            conf_type,
+            conf_threshold,
+            cascade_rounds,
+            cv_splits,
+            nb_type,
+        ))
+    ofname = generate_filename(
+        voting_type,
+        conf_type,
+        conf_threshold,
+        ppigraph.label_type,
+        cv_splits,
+        nb_type,
+        cascade_rounds,
+        metric=ppigraph.metric_type,
+    )
+    ofname = "{}{}".format(outfile, ofname)
+
+    res = run_kfold_cv(ppigraph,
+                       cv_splits=cv_splits,
+                       voting_func=VOTE_MAP[voting_type],
+                       conf_func=CONF_MAP[conf_type],
+                       K=K,
+                       nb_type=nb_type,
+                       cascade_rounds=cascade_rounds,
+                       conf_threshold=conf_threshold)
+
+    acc_scores = res[0]
+    f1_scores = res[1]
+    """
+        Below is preamble for printing results
+    """
+    kwargs = {}
+    kwargs['ppigraph'] = ppigraph.metric_type
+    kwargs['labels'] = labels
+    kwargs['voting_func'] = voting_type
+    kwargs['conf_func'] = conf_type
+    kwargs['conf_threshold'] = conf_threshold
+    kwargs['nb_type'] = nb_type
+    kwargs['cascade_rounds'] = cascade_rounds
+    kwargs['cv_splits'] = cv_splits
+    kwargs['avg_acc'] = np.mean(acc_scores)
+    kwargs['std_acc'] = np.std(acc_scores)
+    kwargs['avg_f1'] = np.mean(f1_scores)
+    kwargs['std_f1'] = np.std(f1_scores)
+    print("acc_mean: {}, acc_std: {} // f1_mean: {}, f1_std: {}".format(
+        round(np.mean(acc_scores), 4), round(np.std(acc_scores), 4),
+        round(np.mean(f1_scores), 4), round(np.std(f1_scores), 4)))
+
+    output_results(ofname, **kwargs)
