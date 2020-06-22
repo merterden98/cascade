@@ -22,7 +22,9 @@ parser.add_argument('--K',
                     type=int,
                     default=10,
                     help='number of neighbors for kNN')
-parser.add_argument('--ntype', choices=['all', 'known'], default='known')
+parser.add_argument('--ntype',
+                    choices=['all', 'known', 'all_h'],
+                    default='known')
 parser.add_argument('--rounds', type=int, default=10)
 parser.add_argument('--cv_rounds', type=int, default=2)
 parser.add_argument('--hfiles',

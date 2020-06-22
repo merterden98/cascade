@@ -148,57 +148,21 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
     Majority vote algorithm using MIPS label hierarchical structure
     '''
 
-    # votes is a dictionary of dictionaries. votes[level][node] == [labels]
+    # votes = {}
     votes = node.votes
 
-    # Indicates how much of the predecessor's vote is passed onto the
-    # labeled descendent (the remaining is distributed among the other descendents
-    """
-        Let's make this a kwarg
-    """
-    vote_weight = 0.8
-
-    # top_level == 2
-    top_level = max(node.hierarchy_labels.keys())
-    hvotes = dict()
-    for i in range(top_level + 1):
-        hvotes[i] = dict()
+    aggregate_hierarchy_labels(neighbors, node_dict)
 
     for nb_name in neighbors:
         nb = node_dict[nb_name]
         nb_labels = nb.labels
         nb_votepower = nb.label_conf
-
-        top_labels = nb.hierarchy_labels[top_level]
-        for l in top_labels:
-            if l in hvotes[top_level]:
-                hvotes[top_level][l] += 1.0
-            else:
-                hvotes[top_level][l] = 1.0  # *nb_votepower???
-            # descendents = nb.graph.label_descendents[l]
-
-            mvh_recur(nb, l, hvotes, top_level, 1.0,
-                      vote_weight)  # consider votepower for pseudolabels
-
         if nb.pseudo_label:
-            curr_level = 0
-            h_pseudo_labels = []
-            curr_label = nb.pseudo_label
-            while curr_level <= top_level:
-                h_pseudo_labels.append(curr_label)
-                if curr_level < top_level:
-                    curr_label = nb.graph.label_predecessors[curr_label]
-                curr_level += 1
+            nb_labels = [nb.pseudo_label]
+        for l in nb_labels:
+            if l in votes: votes[l] += nb_votepower
+            else: votes[l] = nb_votepower
 
-            # hvotes
-            mvh_recur_p(nb, curr_label, hvotes, top_level, nb_votepower,
-                        vote_weight, h_pseudo_labels)
-
-    if neighbors:
-        for l, v in hvotes[0].items():
-            votes[l] = v
-    # votes = hvotes[0]
-    # print(votes)
     sorted_votes = sorted(
         votes.items(),
         key=lambda x: x[1],
@@ -211,163 +175,26 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
     top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
     top_labels.sort()
 
-    #print(sorted_votes)
     prediction = top_labels[0]
     return prediction
 
 
-def wmv_hierarchy(node, neighbors, node_dict, **kwargs):
-    '''
-    Majority vote algorithm using MIPS label hierarchical structure
-    '''
-
-    # votes is a dictionary of dictionaries. votes[level][node] == [labels]
-    votes = node.votes
-
-    # Indicates how much of the predecessor's vote is passed onto the
-    # labeled descendent (the remaining is distributed among the other descendents
-    vote_weight = 0.8
-
-    # top_level == 2
-    top_level = max(node.hierarchy_labels.keys())
-    hvotes = dict()
-    for i in range(top_level + 1):
-        hvotes[i] = dict()
-
-    for nb_name in neighbors:
-        nb = node_dict[nb_name]
-        nb_labels = nb.labels
-        nb_votepower = (1 / node.dsd_dict[nb_name]) * nb.label_conf
-
-        top_labels = nb.hierarchy_labels[top_level]
-        for l in top_labels:
-            if l in hvotes[top_level]:
-                hvotes[top_level][l] += (1 / node.dsd_dict[nb_name])
-            else:
-                hvotes[top_level][l] = (1 / node.dsd_dict[nb_name])
-            # descendents = nb.graph.label_descendents[l]
-
-            mvh_recur(nb, l, hvotes, top_level, 1 / node.dsd_dict[nb_name],
-                      vote_weight)  # consider votepower for pseudolabels
-
-        if nb.pseudo_label:
-            curr_level = 0
-            h_pseudo_labels = []
-            curr_label = nb.pseudo_label
-            while curr_level <= top_level:
-                h_pseudo_labels.append(curr_label)
-                if curr_level < top_level:
-                    curr_label = nb.graph.label_predecessors[curr_label]
-                curr_level += 1
-
-            # hvotes
-            mvh_recur_p(nb, curr_label, hvotes, top_level, nb_votepower,
-                        vote_weight, h_pseudo_labels)
-
-    if neighbors:
-        for l, v in hvotes[0].items():
-            votes[l] = v
-    # votes = hvotes[0]
-    # print(votes)
-    sorted_votes = sorted(
-        votes.items(),
-        key=lambda x: x[1],
-        reverse=True,
-    )
-
-    if not sorted_votes: return None
-
-    top_vote_score = sorted_votes[0][1]
-    top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
-    top_labels.sort()
-
-    #print(sorted_votes)
-    prediction = top_labels[0]
-    return prediction
-
-
-def mvh_recur(curr_node, pred_label, hvotes, curr_level, curr_votepower,
-              vote_weight):
-    '''
-    Recursively assigns voting power to a label and its descendents
-    Takes the top level label as an argument
-    '''
-    # CHECK THIS
-    if curr_level > 0:
-        descendents = curr_node.graph.label_descendents[pred_label]
-        # Number of descendent labels that belong to the node
-        labeled_desc = len([
-            x for x in descendents if x in curr_node.hierarchy_labels.values()
-        ])
-        for d_label in descendents:
-            # If the current node is annotated with d_label
-            if d_label in curr_node.hierarchy_labels[curr_level - 1]:
-                if len(descendents) > 1:
-                    vpower = curr_votepower * (vote_weight +
-                                               (labeled_desc - 1) *
-                                               (1 - vote_weight) /
-                                               (len(descendents) - 1))
-                else:
-                    vpower = curr_votepower * vote_weight
-            else:
-                if len(descendents) > 1:
-                    if labeled_desc > 0:
-                        vpower = curr_votepower * labeled_desc * (
-                            1 - vote_weight) / (len(descendents) - 1)
-                    else:
-                        vpower = curr_votepower * (
-                            1 - vote_weight) / len(descendents)
-                else:
-                    vpower = curr_votepower * (1 - vote_weight)
-            if d_label in hvotes[curr_level - 1]:
-                hvotes[curr_level - 1][d_label] += vpower
-            else:
-                hvotes[curr_level - 1][d_label] = vpower
-
-            #print("{}: {}".format(d_label, hvotes[curr_level - 1][d_label]))
-            mvh_recur(curr_node, d_label, hvotes, curr_level - 1, vpower,
-                      vote_weight)
-
-
-def mvh_recur_p(curr_node, pred_label, hvotes, curr_level, curr_votepower,
-                vote_weight, pseudo):
-    '''
-    Recursively assigns voting power to a pseudo-label and its predecessors.
-    Works just as the mvh_recur function, but it checks the list of pseudo labels
-    rather than the node's actual labels
-    '''
-
-    if curr_level > 0:
-        descendents = curr_node.graph.label_descendents[pred_label]
-        # Number of descendent labels that belong to the node
-        labeled_desc = len([x for x in descendents if x in pseudo])
-        # print('descendents: {}'.format(descendents))
-        # print('labels: {}'.format(curr_node.hierarchy_labels))
-        for d_label in descendents:
-            # If the current node is annotated with d_label
-            if d_label in pseudo:
-                if len(descendents) > 1:
-                    vpower = curr_votepower * (vote_weight +
-                                               (labeled_desc - 1) *
-                                               (1 - vote_weight) /
-                                               (len(descendents) - 1))
-                else:
-                    vpower = curr_votepower * vote_weight
-            else:
-                if len(descendents) > 1:
-                    if labeled_desc > 0:
-                        vpower = curr_votepower * labeled_desc * (
-                            1 - vote_weight) / (len(descendents) - 1)
-                    else:
-                        vpower = curr_votepower * (
-                            1 - vote_weight) / len(descendents)
-                else:
-                    vpower = curr_votepower * (1 - vote_weight)
-            if d_label in hvotes[curr_level - 1]:
-                hvotes[curr_level - 1][d_label] += vpower
-            else:
-                hvotes[curr_level - 1][d_label] = vpower
-
-            #print("{}: {}".format(d_label, hvotes[curr_level - 1][d_label]))
-            mvh_recur_p(curr_node, d_label, hvotes, curr_level - 1, vpower,
-                        vote_weight, pseudo)
+def aggregate_hierarchy_labels(neighbors, node_dict):
+    """
+        Collates neighbors that do not have 
+        higher level labels.
+    """
+    # Key is label value is count
+    hierarchy_labels = {}
+    for neighbor in neighbors:
+        # Checks if we don't have labels for current node
+        if not node_dict[neighbor].labels:
+            # We technically have only two levels of MIPS but
+            # good to future proof here.
+            for combined_label_list in neighbor.hierarchy_labels.values():
+                for (_, label_list) in combined_label_list:
+                    for label in label_list:
+                        if label not in hierarchy_labels:
+                            hierarchy_labels[label] = 1
+                        else:
+                            hierarchy_labels[label] += 1
