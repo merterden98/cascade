@@ -31,7 +31,7 @@ parser.add_argument('--hfiles',
                     nargs='+',
                     help='Files containing extra MIPS label information')
 parser.add_argument('--mode', choices=['cv', 'predict'], default='predict')
-parser.add_argument('--outfile', default='./')
+parser.add_argument('--outdir', default='./')
 
 
 def main():
@@ -68,7 +68,7 @@ def main():
                                        cascade_rounds=args.rounds,
                                        conf_threshold=args.threshold,
                                        cv_splits=args.cv_rounds,
-                                       outfile=args.outfile)
+                                       outfile=args.outdir)
 
 
 if __name__ == '__main__':
