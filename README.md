@@ -47,5 +47,5 @@ It will run MVC in cross validation mode on yeast data. Hierarchy mips files are
 │   ├── graph.py -- PPIGraph class for usage in makegraph.py
 │   ├── makegraph.py -- Functions for creating PPIGraph
 │   └── vote.py -- Contains polymorphic vote functions
-└── test_acc.py
+└── run.py
 ```

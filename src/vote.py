@@ -33,6 +33,9 @@ def vote(ppigraph=None,
 
     predict_node_set = set(predict_nodes)
 
+    for node in predict_nodes:
+        node.is_predict = True
+
     # Get t_nearest neighborhood under DSD of node
     for node in predict_nodes:
         if nb_type == 'all':
@@ -61,6 +64,9 @@ def vote(ppigraph=None,
         conf = conf_func(node, t_nearest, node_dict)
         node.conf_score = conf
         predictions.append((node, pred, conf))
+
+        for node in predict_nodes:
+            node.is_predict = None
 
     return predictions
 
@@ -151,7 +157,7 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
     # votes = {}
     votes = node.votes
 
-    aggregate_hierarchy_labels(neighbors, node_dict)
+    hierarchy_dict = aggregate_hierarchy_labels(neighbors, node_dict)
 
     for nb_name in neighbors:
         nb = node_dict[nb_name]
@@ -159,9 +165,14 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
         nb_votepower = nb.label_conf
         if nb.pseudo_label:
             nb_labels = [nb.pseudo_label]
-        for l in nb_labels:
-            if l in votes: votes[l] += nb_votepower
-            else: votes[l] = nb_votepower
+        if nb.is_predict or not nb.labels:
+            # if this node has unknown labels
+            # we will do boosting at the end
+            continue
+        else:
+            for l in nb_labels:
+                if l in votes: votes[l] += nb_votepower
+                else: votes[l] = nb_votepower
 
     sorted_votes = sorted(
         votes.items(),
@@ -188,13 +199,56 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
     hierarchy_labels = {}
     for neighbor in neighbors:
         # Checks if we don't have labels for current node
-        if not node_dict[neighbor].labels:
+        # Or is a predict node that we have no clue about
+        node = node_dict[neighbor]
+        if not node.labels or node.is_predict:
             # We technically have only two levels of MIPS but
             # good to future proof here.
-            for combined_label_list in neighbor.hierarchy_labels.values():
-                for (_, label_list) in combined_label_list:
-                    for label in label_list:
-                        if label not in hierarchy_labels:
-                            hierarchy_labels[label] = 1
-                        else:
-                            hierarchy_labels[label] += 1
+            for combined_label_list in node.hierarchy_labels:
+                for label_list_tuple in combined_label_list:
+                    if len(label_list_tuple) == 2:
+                        (_, label_list) = label_list_tuple
+                        for label in label_list:
+                            if label not in hierarchy_labels:
+                                hierarchy_labels[label] = 1
+                            else:
+                                hierarchy_labels[label] += 1
+    return hierarchy_labels
+
+
+def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
+    """
+        Boosts existing votes depending
+        on lower MIPS levels.
+
+        TODO: Pass in boost params from top level
+    """
+
+    for label in votes.keys():
+        mips_2_prefix = get_mips_2_prefix(label)
+        mips_1_prefix = get_mips_1_prefix(label)
+        if mips_2_prefix in hierarchy_dict:
+            votes[label] += votes[label] + (hierarchy_dict[mips_2_prefix] *
+                                            mips_2_boost)
+        elif mips_1_prefix in hierarchy_dict:
+            votes[label] += votes[label] + (hierarchy_dict[mips_1_prefix] *
+                                            mips_1_boost)
+    return votes
+
+
+def get_mips_2_prefix(label):
+    if len(label) == 5:
+        return label
+    if len(label) == 8:
+        return label[:6]
+    else:
+        return None
+
+
+def get_mips_1_prefix(label):
+    if len(label) == 2:
+        return label
+    if len(label) == 5 or len(label) == 8:
+        return label[:3]
+    else:
+        return None
