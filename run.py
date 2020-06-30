@@ -12,6 +12,9 @@ parser.add_argument('--type',
                     required=True)
 parser.add_argument('--labelfile',
                     help='Protein Label file if not in PICKLE mode')
+parser.add_argument('--labeltype',
+                    help='Label type (i.e. mips1, mips2, etc.)')
+
 parser.add_argument('--name',
                     help='object name for pickling')
 
@@ -53,7 +56,7 @@ def main():
             if args.type == 'DSD':
                 # Refactor for GO
                 ppi_graph = makegraph.getPPIGraph(args.infile, args.labelfile,
-                                                  "MIPS", args.type,
+                                                  args.labeltype, args.type,
                                                   args.hfiles)
                 pickle.dump(ppi_graph, open("pickles/{}.pickle".format(args.name), 'wb'))
                 

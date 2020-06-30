@@ -1,0 +1,29 @@
+# Initial testing plan for hierarchial mips labels
+# 2020.06.30
+
+[Baseline - acmbcb paper]
+
+Mips1, Mips2, Mips3
+- cv_rounds: 2-fold, 4-fold, 6-fold
+- high_conf_threshold = 0.35
+- conftype: ENT
+- voting: MV, MV-Known, WMV, WMV-Known
+
+
+[Hierarchical #1a - using ENT]
+
+Mips2, Mips3
+- cv_rounds: 2-fold, 4-fold, 6-fold
+- high_conf_threshold = 0.35
+- conftype = ENT
+- voting: MV, MV-Known, WMV, WMV-Known
+
+
+[Hierachical #1b - using CT/WCT]
+
+Mips2, Mips3:
+- same as above, but using CT or WCT
+
+
+
+

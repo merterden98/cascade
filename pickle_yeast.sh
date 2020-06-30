@@ -10,15 +10,21 @@ HDATA=sampledata/*.list
 
 # make mips1 pickle
 echo "making yeast mips1 pickle..."
-python3 run.py --infile=$YEAST_DSD_FILE --type=DSD --labelfile=$MIPS1 --name=yeast.mips1.dsd --hfiles $HDATA
+python3 run.py --infile=$YEAST_DSD_FILE \
+        --type=DSD --labelfile=$MIPS1 --labeltype=mips1 --hfiles $HDATA \
+        --name=yeast.mips1.dsd 
 
 # # make mips2 pickle
 echo "making yeast mips2 pickle..."
-python3 run.py --infile=$YEAST_DSD_FILE --type=DSD --labelfile=$MIPS2 --name=yeast.mips2.dsd --hfiles $HDATA
+python3 run.py --infile=$YEAST_DSD_FILE \
+        --type=DSD --labelfile=$MIPS2 --labeltype=mips2 --hfiles $HDATA \
+        --name=yeast.mips2.dsd 
 
 # make mips3 pickle
 echo "making yeast mips3 pickle..."
-python3 run.py --infile=$YEAST_DSD_FILE --type=DSD --labelfile=$MIPS3 --name=yeast.mips3.dsd --hfiles $HDATA
+python3 run.py --infile=$YEAST_DSD_FILE \
+        --type=DSD --labelfile=$MIPS3 --labeltype=mips3 --hfiles $HDATA \
+        --name=yeast.mips3.dsd
 
 
 
