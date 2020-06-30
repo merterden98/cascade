@@ -69,6 +69,8 @@ def main():
                                   nb_type=args.ntype,
                                   cascade_rounds=args.rounds)
         if args.mode == 'cv':
+            print("Running CV")
+            print(args.infile)
             crossvalidate.run_cv_tests(ppigraph=ppi_graph,
                                        voting_type=args.vtype,
                                        conf_type=args.conftype,
