@@ -1,4 +1,5 @@
 import argparse
+import pickle
 from src import makegraph
 from src import crossvalidate
 
@@ -11,6 +12,8 @@ parser.add_argument('--type',
                     required=True)
 parser.add_argument('--labelfile',
                     help='Protein Label file if not in PICKLE mode')
+parser.add_argument('--name',
+                    help='object name for pickling')
 
 parser.add_argument('--vtype', choices=['MV', 'WMV', 'MVH'], default='WMV')
 parser.add_argument('--conftype', choices=['ENT', 'CT', 'WCT'], default='ENT')
@@ -39,6 +42,10 @@ def main():
 
     # GRAPH GENERATION LOGIC
     ppi_graph = None
+
+    if args.type == 'PICKLE':
+        ppi_graph = pickle.load(open(args.infile, 'rb'))
+    
     if args.type != 'PICKLE':
         if not args.labelfile:
             raise Exception('Need label file for non Pickle graphs')
@@ -48,6 +55,8 @@ def main():
                 ppi_graph = makegraph.getPPIGraph(args.infile, args.labelfile,
                                                   "MIPS", args.type,
                                                   args.hfiles)
+                pickle.dump(ppi_graph, open("pickles/{}.pickle".format(args.name), 'wb'))
+                
             if args.type == 'PPI':
                 raise Exception('Needs Implementation')
 
