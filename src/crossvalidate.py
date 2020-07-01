@@ -449,12 +449,12 @@ def run_cv_tests(ppigraph=None,
                  cascade_rounds=10,
                  conf_threshold=0.30,
                  cv_splits=2,
-                 labels="MIPS"):
+                 labels=None):
 
     print(
         "Running acc test for: {} - {} - {} - {} - {} - {}r - {}f - {}".format(
             ppigraph.metric_type,
-            ppigraph.label_type,
+            labels,
             voting_type,
             conf_type,
             conf_threshold,
@@ -466,7 +466,7 @@ def run_cv_tests(ppigraph=None,
         voting_type,
         conf_type,
         conf_threshold,
-        ppigraph.label_type,
+        labels,
         cv_splits,
         nb_type,
         cascade_rounds,
