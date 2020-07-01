@@ -87,7 +87,8 @@ def main():
                                        cascade_rounds=args.rounds,
                                        conf_threshold=args.threshold,
                                        cv_splits=args.cv_rounds,
-                                       outfile=args.outdir)
+                                       outfile=args.outdir,
+                                       labels=ppi_graph.label_type)
 
 
 if __name__ == '__main__':
