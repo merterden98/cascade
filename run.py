@@ -1,5 +1,6 @@
 import argparse
 import pickle
+from os import path, mkdir
 from src import makegraph
 from src import crossvalidate
 
@@ -13,10 +14,10 @@ parser.add_argument('--type',
 parser.add_argument('--labelfile',
                     help='Protein Label file if not in PICKLE mode')
 parser.add_argument('--labeltype',
-                    help='Label type (i.e. mips1, mips2, etc.)')
+                    help='Label type (i.e. mips1, mips2, etc.)', default="MIPS")
 
 parser.add_argument('--name',
-                    help='object name for pickling')
+                    help='object name for pickling', required=True)
 
 parser.add_argument('--vtype', choices=['MV', 'WMV', 'MVH'], default='WMV')
 parser.add_argument('--conftype', choices=['ENT', 'CT', 'WCT'], default='ENT')
@@ -48,7 +49,7 @@ def main():
 
     if args.type == 'PICKLE':
         ppi_graph = pickle.load(open(args.infile, 'rb'))
-    
+
     if args.type != 'PICKLE':
         if not args.labelfile:
             raise Exception('Need label file for non Pickle graphs')
@@ -58,8 +59,12 @@ def main():
                 ppi_graph = makegraph.getPPIGraph(args.infile, args.labelfile,
                                                   args.labeltype, args.type,
                                                   args.hfiles)
-                pickle.dump(ppi_graph, open("pickles/{}.pickle".format(args.name), 'wb'))
-                
+                if not path.isdir('./pickles'):
+                    mkdir('./pickles')
+
+                pickle.dump(ppi_graph, open(
+                    "pickles/{}.pickle".format(args.name), 'wb'))
+
             if args.type == 'PPI':
                 raise Exception('Needs Implementation')
 
