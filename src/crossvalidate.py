@@ -10,7 +10,8 @@ from . import vote
 from . import cascade
 from . import confidence as conf
 
-VOTE_MAP = {'MV': vote.mv, 'WMV': vote.wmv, 'MVH': vote.mv_hierarchy}
+VOTE_MAP = {'MV': vote.mv, 'WMV': vote.wmv,
+            'MVH': vote.mv_hierarchy, 'WMVH': vote.wmv_hierarchy}
 CONF_MAP = {
     'ENT': conf.entropy_conf,
     'CT': conf.count_conf,
@@ -128,7 +129,8 @@ def cv_round(ppigraph=None,
         # Continue to cascade with lowest non-zero conf val if conf_cutoff = 0
         if not conf_cutoff:
             conf_vals = [p[2] for p in predictions if p[2] > 0]
-            if not conf_vals: break
+            if not conf_vals:
+                break
             conf_vals.sort()
             conf_cutoff = conf_vals[0]
 
@@ -193,7 +195,8 @@ def calc_f1_OLD(node_list, alpha=3):
     for l in all_labels:
         prec = calc_precision(eval_list, l, alpha=alpha)
         recall = calc_recall(eval_list, l, alpha=alpha)
-        if recall == None or prec == None or (prec + recall) == 0: continue
+        if recall == None or prec == None or (prec + recall) == 0:
+            continue
         f1 = (2 * prec * recall) / (prec + recall)
         scores.append(f1)
 
@@ -240,7 +243,8 @@ def calc_precision(node_list, label, alpha=3):
         top_preds = top_alpha_preds(n, alpha=alpha)
 
         print(top_preds)
-        if label not in top_preds: continue
+        if label not in top_preds:
+            continue
         if label in set(n.labels):
             true_pos += 1
         else:
@@ -256,7 +260,7 @@ def calc_precision(node_list, label, alpha=3):
 def calc_recall(node_list, label, alpha=3):
     '''
     Compute recall on node_list given a label.
-    
+
     Recall = (# correct predictions for label)
              / (# correct preds for label + # true labels with no pred)
     '''
@@ -431,7 +435,8 @@ def predict(ppigraph=None,
 
         if not conf_cutoff:
             conf_vals = [p[2] for p in predictions if p[2] > 0]
-            if not conf_vals: break
+            if not conf_vals:
+                break
             conf_vals.sort()
             conf_cutoff = conf_vals[0]
 

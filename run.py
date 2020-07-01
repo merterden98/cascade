@@ -19,7 +19,8 @@ parser.add_argument('--labeltype',
 parser.add_argument('--name',
                     help='object name for pickling', required=True)
 
-parser.add_argument('--vtype', choices=['MV', 'WMV', 'MVH'], default='WMV')
+parser.add_argument(
+    '--vtype', choices=['MV', 'WMV', 'MVH', 'WMVH'], default='WMV')
 parser.add_argument('--conftype', choices=['ENT', 'CT', 'WCT'], default='ENT')
 parser.add_argument('--threshold',
                     type=float,

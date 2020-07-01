@@ -71,7 +71,7 @@ def vote(ppigraph=None,
     return predictions
 
 
-#Returns a str in the form of a label
+# Returns a str in the form of a label
 def mv(node, neighbors, node_dict, **kwargs):
     '''
     Majority vote algorithm that returns a predicted label for a single node.
@@ -91,8 +91,10 @@ def mv(node, neighbors, node_dict, **kwargs):
         if nb.pseudo_label:
             nb_labels = [nb.pseudo_label]
         for l in nb_labels:
-            if l in votes: votes[l] += nb_votepower
-            else: votes[l] = nb_votepower
+            if l in votes:
+                votes[l] += nb_votepower
+            else:
+                votes[l] = nb_votepower
 
     sorted_votes = sorted(
         votes.items(),
@@ -100,7 +102,8 @@ def mv(node, neighbors, node_dict, **kwargs):
         reverse=True,
     )
 
-    if not sorted_votes: return None
+    if not sorted_votes:
+        return None
 
     top_vote_score = sorted_votes[0][1]
     top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
@@ -125,13 +128,16 @@ def wmv(node, neighbors, node_dict, **kwargs):
         # DEBUG
         # print("node: {}, nb: {}".format(node.name, nb_name))
 
-        if node.dsd_dict[nb_name] == 0: continue
+        if node.dsd_dict[nb_name] == 0:
+            continue
         nb_votepower = (1 / node.dsd_dict[nb_name]) * nb.label_conf
         if nb.pseudo_label:
             nb_labels = [nb.pseudo_label]
         for l in nb_labels:
-            if l in votes: votes[l] += nb_votepower
-            else: votes[l] = nb_votepower
+            if l in votes:
+                votes[l] += nb_votepower
+            else:
+                votes[l] = nb_votepower
 
     sorted_votes = sorted(
         votes.items(),
@@ -139,7 +145,8 @@ def wmv(node, neighbors, node_dict, **kwargs):
         reverse=True,
     )
 
-    if not sorted_votes: return None
+    if not sorted_votes:
+        return None
 
     top_vote_score = sorted_votes[0][1]
     top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
@@ -171,16 +178,66 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
             continue
         else:
             for l in nb_labels:
-                if l in votes: votes[l] += nb_votepower
-                else: votes[l] = nb_votepower
-
+                if l in votes:
+                    votes[l] += nb_votepower
+                else:
+                    votes[l] = nb_votepower
+    boost_votes(votes, hierarchy_dict)
     sorted_votes = sorted(
         votes.items(),
         key=lambda x: x[1],
         reverse=True,
     )
 
-    if not sorted_votes: return None
+    if not sorted_votes:
+        return None
+
+    top_vote_score = sorted_votes[0][1]
+    top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
+    top_labels.sort()
+
+    prediction = top_labels[0]
+    return prediction
+
+
+def wmv_hierarchy(node, neighbors, node_dict, **kwargs):
+    '''
+    Weighted Majority vote algorithm using MIPS label hierarchical structure
+    '''
+
+    # votes = {}
+    votes = node.votes
+
+    hierarchy_dict = aggregate_hierarchy_labels(neighbors, node_dict)
+
+    for nb_name in neighbors:
+        nb = node_dict[nb_name]
+        nb_labels = nb.labels
+        if node.dsd_dict[nb_name] == 0:
+            continue
+        nb_votepower = (1 / node.dsd_dict[nb_name]) * nb.label_conf
+
+        if nb.pseudo_label:
+            nb_labels = [nb.pseudo_label]
+        if nb.is_predict or not nb.labels:
+            # if this node has unknown labels
+            # we will do boosting at the end
+            continue
+        else:
+            for l in nb_labels:
+                if l in votes:
+                    votes[l] += nb_votepower
+                else:
+                    votes[l] = nb_votepower
+    boost_votes(votes, hierarchy_dict)
+    sorted_votes = sorted(
+        votes.items(),
+        key=lambda x: x[1],
+        reverse=True,
+    )
+
+    if not sorted_votes:
+        return None
 
     top_vote_score = sorted_votes[0][1]
     top_labels = [n[0] for n in sorted_votes if n[1] == top_vote_score]
