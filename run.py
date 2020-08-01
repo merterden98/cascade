@@ -17,7 +17,7 @@ parser.add_argument('--labeltype',
                     help='Label type (i.e. mips1, mips2, etc.)', default="MIPS")
 
 parser.add_argument('--name',
-                    help='object name for pickling', required=True)
+                    help='object name for pickling')
 
 parser.add_argument(
     '--vtype', choices=['MV', 'WMV', 'MVH', 'WMVH'], default='WMV')

@@ -15,7 +15,7 @@
 # c) cascade all_hierarchical
 
 # SET RESULTS OUTPUT DIR
-RESULTS=july01_results/mips2/
+RESULTS=july01_results_b/mips2/
 
 # -------------------------------------------------------
 #                  MIPS 2 - 2fold cv                    #

@@ -15,34 +15,34 @@
 # c) cascade all_hierarchical
 
 # SET RESULTS OUTPUT DIR
-RESULTS=july01_results/mips3/
+RESULTS=july02_results/
 
 # -------------------------------------------------------
 #                  MIPS 3 - 2fold cv                    #
 
 # mips3 - 2fold - mv all ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=all \
-        --rounds=12 \
-        --cv_rounds=2 \
-        --mode=cv \
-        --outdir=$RESULTS
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=all \
+#         --rounds=12 \
+#         --cv_rounds=2 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
-# mips3 - 2fold - mv known ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=known \
-        --rounds=12 \
-        --cv_rounds=2 \
-        --mode=cv \
-        --outdir=$RESULTS
+# # mips3 - 2fold - mv known ;
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=known \
+#         --rounds=12 \
+#         --cv_rounds=2 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
 # mips3 - 2fold - mvh allh ;
 python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
@@ -60,28 +60,28 @@ python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
 #                  MIPS 3 - 4fold cv                    #
 
 # mips3 - 4fold - mv all ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=all \
-        --rounds=12 \
-        --cv_rounds=4 \
-        --mode=cv \
-        --outdir=$RESULTS
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=all \
+#         --rounds=12 \
+#         --cv_rounds=4 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
-# mips3 - 4fold - mv known ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=known \
-        --rounds=12 \
-        --cv_rounds=4 \
-        --mode=cv \
-        --outdir=$RESULTS
+# # mips3 - 4fold - mv known ;
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=known \
+#         --rounds=12 \
+#         --cv_rounds=4 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
 # mips3 - 4fold - mvh allh ;
 python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
@@ -100,28 +100,28 @@ python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
 #                  MIPS 3 - 6fold cv                    #
 
 # mips3 - 6fold - mv all ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=all \
-        --rounds=12 \
-        --cv_rounds=6 \
-        --mode=cv \
-        --outdir=$RESULTS
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=all \
+#         --rounds=12 \
+#         --cv_rounds=6 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
 # mips3 - 6fold - mv known ;
-python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
-        --type=PICKLE \
-        --vtype=MV \
-        --conftype=ENT \
-        --threshold=0.35 \
-        --ntype=known \
-        --rounds=12 \
-        --cv_rounds=6 \
-        --mode=cv \
-        --outdir=$RESULTS
+# python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MV \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=known \
+#         --rounds=12 \
+#         --cv_rounds=6 \
+#         --mode=cv \
+#         --outdir=$RESULTS
 
 # mips3 - 6fold - mvh allh ;
 python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
