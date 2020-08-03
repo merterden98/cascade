@@ -49,7 +49,6 @@ def load_GOlabels(labels_fname):
         name = row_parts[0]
         labels = row_parts[1:]
         labels_dict[name] = labels
-
     return labels_dict
 
 
@@ -70,7 +69,7 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
 
     for label_dict in hierarchy_labels_dict_list:
         for protein_name in label_dict.keys():
-            #Creates  [(MIPS_LEVEL, LABEL_LIST)] for every protein
+            # Creates  [(MIPS_LEVEL, LABEL_LIST)] for every protein
             label_dict[protein_name] = list(
                 (mips_from_length(label_dict[protein_name]),
                  label_dict[protein_name]))
@@ -146,7 +145,7 @@ def format_nodes_DSD(node_list=None,
         node_list (list): List of nodes and corresponding DSD dicts.
         labels_dict (dict): Node, function label pairs.
         label_type (str): Type of function label (e.g. 'mips_1').
-    
+
     Returns:
         List of `PPINode` objects.
     """
@@ -208,7 +207,6 @@ def generate_graph_DSD(dsd_filename,
                                  labels_dict=labels_dict,
                                  label_type=label_type,
                                  hierarchy_labels_dict=hierarchy_labels_dict)
-
     # Create PPIGraph object
     print("Creating new PPIGraph")
     new_PPIGraph = graph.PPIGraph(node_list=ppi_nodes,
@@ -222,6 +220,7 @@ def getPPIGraph(matrix_filename, labels_filename, label_type, metric_type,
                 hierarchy_files):
 
     hierarchy_labels_dict_list = []
+    merged_hierarchy_labels_dict = {}
     if hierarchy_files:
         hierarchy_labels_dict_list = [
             load_labels(hfile) for hfile in hierarchy_files

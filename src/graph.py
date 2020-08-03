@@ -20,11 +20,12 @@ class PPINode(object):
         sp_dict (dict): Name, shortest path value pairs to other nodes.
         labels (list): List of function labels.
         label_type (str): Type of function label (e.g. 'mips_1').
-   
+
     Note:
         sorted_nodes_DSD and sorted_nodes_SP attributes contain list of
             other node names sorted by distance.
     """
+
     def __init__(self,
                  name=None,
                  dsd_dict=None,
@@ -62,7 +63,7 @@ class PPINode(object):
         Returns list of all other node names sorted by DSD value.
         """
         if not self.dsd_dict:
-            return None
+            return []
 
         sorted_pairs = sorted(self.dsd_dict.items(), key=lambda x: x[1])
 
@@ -74,6 +75,7 @@ class PPIGraph(object):
     """
     Represents entire PPI graph containing all PPINode objects.
     """
+
     def __init__(self, node_list=None, label_type=None, metric_type='DSD'):
         """
         Generate node dict and other inferred attributes.

@@ -1,5 +1,6 @@
 cDSD/
 raw_result/
+sampledata/
 pickles/
 __pycache__/
 *.pyc
