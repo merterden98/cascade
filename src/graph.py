@@ -46,7 +46,7 @@ class PPINode(object):
 
         # Add hierarchical labels
         self.hierarchy_labels = hierarchy_labels
-        self.is_predict = None
+        self.is_predict = False
         self.graph = None
 
         # keep track of votes
