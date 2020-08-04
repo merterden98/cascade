@@ -188,6 +188,8 @@ def mv_hierarchy(node, neighbors, node_dict, **kwargs):
 
     hierarchy_dict = aggregate_hierarchy_labels(neighbors, node_dict)
 
+    # print(hierarchy_dict)
+
     for nb_name in neighbors:
         nb = node_dict[nb_name]
         nb_labels = nb.labels
@@ -281,17 +283,28 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
         # Or is a predict node that we have no clue about
         node = node_dict[neighbor]
         if not node.labels or node.is_predict:
+
+            # DELETE
+            # print(node.hierarchy_labels)
+            # for labels in node.hierarchy_labels[1]:
+            #     for label in labels:
+            #         if label not in hierarchy_labels:
+            #             hierarchy_labels[label] += 1
+            #         else:
+            #             hierarchy_labels[label] += 1
+            
             # We technically have only two levels of MIPS but
             # good to future proof here.
-            for combined_label_list in node.hierarchy_labels:
-                for label_list_tuple in combined_label_list:
-                    if len(label_list_tuple) == 2:
-                        (_, label_list) = label_list_tuple
-                        for label in label_list:
-                            if label not in hierarchy_labels:
-                                hierarchy_labels[label] = 1
-                            else:
-                                hierarchy_labels[label] += 1
+            for (i, label_list) in node.hierarchy_labels:
+
+                # print(label_list)
+
+                for label in label_list:
+                    if label not in hierarchy_labels:
+                        hierarchy_labels[label] = 1
+                    else:
+                        hierarchy_labels[label] += 1
+
     return hierarchy_labels
 
 
@@ -303,15 +316,29 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
         TODO: Pass in boost params from top level
     """
 
+    mips_2_boost = 1.5
+
+    mips_1_boost = 0.75
+
+    # print("votes before")
+    # print(votes)
+
     for label in votes.keys():
         mips_2_prefix = get_mips_2_prefix(label)
         mips_1_prefix = get_mips_1_prefix(label)
+
+        # print(mips_2_prefix)
+        # print(mips_1_prefix)
+
         if mips_2_prefix in hierarchy_dict:
-            votes[label] += votes[label] + (hierarchy_dict[mips_2_prefix] *
-                                            mips_2_boost)
+            votes[label] += hierarchy_dict[mips_2_prefix] * mips_2_boost
         elif mips_1_prefix in hierarchy_dict:
-            votes[label] += votes[label] + (hierarchy_dict[mips_1_prefix] *
-                                            mips_1_boost)
+            votes[label] += hierarchy_dict[mips_1_prefix] * mips_1_boost
+
+    # print("votes after")
+    # print(votes)
+    # print("\n")
+    
     return votes
 
 
@@ -328,6 +355,6 @@ def get_mips_1_prefix(label):
     if len(label) == 2:
         return label
     if len(label) == 5 or len(label) == 8:
-        return label[:3]
+        return label[:2]
     else:
         return None
