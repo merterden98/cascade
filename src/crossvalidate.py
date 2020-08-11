@@ -4,6 +4,7 @@ crossvalidate.py
 '''
 import random
 import numpy as np
+import os
 from datetime import datetime
 from . import graph
 from . import vote
@@ -443,6 +444,7 @@ def predict(ppigraph=None,
         unlabelled_nodes = cascade.assign_pseudolabels(predictions,
                                                        unlabelled_nodes,
                                                        conf_cutoff)
+    return {node.name: node.predicted_label for node in unlabelled_nodes}
 
 
 def run_cv_tests(ppigraph=None,

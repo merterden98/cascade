@@ -40,13 +40,13 @@ def vote(ppigraph=None,
 
     for node in predict_nodes:
         node.is_predict = True
-    
+
     # Get t_nearest neighborhood under DSD of node
     for node in predict_nodes:
         if nb_type == 'all':
             t_nearest = [
                 n for n in node.sorted_nodes_DSD[1:K + 1]
-                if node_dict[n].is_predict == None
+                if node_dict[n] not in predict_node_set
                 # if node_dict[n] not in predict_node_set
             ]  # don't include self
 
@@ -56,13 +56,13 @@ def vote(ppigraph=None,
             # print("is_predict_count = {}".format(is_predict_count))
             # print("len(predict_nodes) = {}".format(len(predict_nodes)))
             # assert(is_predict_count == len(predict_nodes))
-                
+
             # for n in node_dict.values():
             #     if n.is_predict == True:
             #         assert(n in predict_node_set)
-                    
+
             # print(len(t_nearest))
-            
+
         if nb_type == 'known':
             t_nearest = []
             t = 0
@@ -108,7 +108,7 @@ def mv(node, neighbors, node_dict, **kwargs):
 
         # REMOVE
         # print(nb.is_predict)
-        
+
         nb_labels = nb.labels
         nb_votepower = nb.label_conf
         if nb.pseudo_label:

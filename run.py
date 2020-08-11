@@ -71,12 +71,12 @@ def main():
 
     if ppi_graph:
         if args.mode == 'predict':
-            crossvalidate.predict(ppigraph=ppi_graph,
+            print(crossvalidate.predict(ppigraph=ppi_graph,
                                   voting_type=args.vtype,
                                   conf_type=args.conftype,
                                   K=args.K,
                                   nb_type=args.ntype,
-                                  cascade_rounds=args.rounds)
+                                  cascade_rounds=args.rounds))
         if args.mode == 'cv':
             print("Running CV")
             print(args.infile)
