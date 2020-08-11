@@ -88,14 +88,6 @@ def mv(node, neighbors, node_dict, **kwargs):
     for nb_name in neighbors:
         nb = node_dict[nb_name]
 
-
-<< << << < HEAD
-
-        # REMOVE
-        # print(nb.is_predict)
-
-== == == =
->>>>>> > 89d99f50e13ca2fc68bef4972604bef966f2837e
         nb_labels = nb.labels
         nb_votepower = nb.label_conf
         if nb.pseudo_label:
@@ -291,16 +283,16 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
     """
 
     mips_2_boost = 1.5
-    mips_1_boost = 0.75
+    mips_1_boost = 1.5
 
     for label in votes.keys():
         mips_2_prefix = get_mips_2_prefix(label)
         mips_1_prefix = get_mips_1_prefix(label)
 
         if mips_2_prefix in hierarchy_dict:
-            votes[label] += hierarchy_dict[mips_2_prefix] * mips_2_boost
+            votes[label] *= hierarchy_dict[mips_2_prefix] * mips_2_boost
         elif mips_1_prefix in hierarchy_dict:
-            votes[label] += hierarchy_dict[mips_1_prefix] * mips_1_boost
+            votes[label] *= hierarchy_dict[mips_1_prefix] * mips_1_boost
     
     return votes
 
@@ -309,7 +301,7 @@ def get_mips_2_prefix(label):
     if len(label) == 5:
         return label
     if len(label) == 8:
-        return label[:6]
+        return label[:5]
     else:
         return None
 
