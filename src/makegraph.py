@@ -70,10 +70,11 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
     for label_dict in hierarchy_labels_dict_list:
         for protein_name in label_dict.keys():
             # Creates  [(MIPS_LEVEL, LABEL_LIST)] for every protein
-            label_dict[protein_name] = list(
+            label_dict[protein_name] = [
                 (mips_from_length(label_dict[protein_name]),
-                 label_dict[protein_name]))
-
+                label_dict[protein_name])
+            ]
+            
     def merge(accum, new_dict):
         if not accum:
             return new_dict
@@ -83,7 +84,7 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
                     prev = accum[key]
                     accum[key] = prev + new_dict[key]
             return accum
-
+        
     return reduce(merge, hierarchy_labels_dict_list, {})
 
 

@@ -1,0 +1,32 @@
+# python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MVH \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=all_h \
+#         --rounds=12 \
+#         --cv_rounds=2 \
+#         --mode=cv \
+#         --outdir=$RESULTS
+
+# python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+#         --type=PICKLE \
+#         --vtype=MVH \
+#         --conftype=ENT \
+#         --threshold=0.35 \
+#         --ntype=all_h \
+#         --rounds=12 \
+#         --cv_rounds=4 \
+#         --mode=cv \
+#         --outdir=$RESULTS
+
+python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+        --type=PICKLE \
+        --vtype=MVH \
+        --conftype=ENT \
+        --threshold=0.35 \
+        --ntype=all_h \
+        --rounds=12 \
+        --cv_rounds=6 \
+        --mode=cv \
+        --outdir=$RESULTS

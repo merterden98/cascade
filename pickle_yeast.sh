@@ -8,13 +8,13 @@ MIPS2="sampledata/MIPSSecondLevel.list"
 MIPS3="sampledata/MIPSThirdLevel.list"
 
 # make mips1 pickle
-echo "making yeast mips1 pickle..."
-python3 run.py --infile=$YEAST_DSD_FILE \
-        --type=DSD --labelfile=$MIPS1 --labeltype=mips1 \
-        --hfiles $MIPS1 \
-        --name=yeast.mips1.dsd 
+# echo "making yeast mips1 pickle..."
+# python3 run.py --infile=$YEAST_DSD_FILE \
+#         --type=DSD --labelfile=$MIPS1 --labeltype=mips1 \
+#         --hfiles $MIPS1 \
+#         --name=yeast.mips1.dsd 
 
-# # make mips2 pickle
+# make mips2 pickle
 echo "making yeast mips2 pickle..."
 python3 run.py --infile=$YEAST_DSD_FILE \
         --type=DSD --labelfile=$MIPS2 --labeltype=mips2 --hfiles $MIPS1 \
