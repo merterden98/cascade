@@ -39,6 +39,9 @@ def load_GOlabels(labels_fname):
 
     Tab-delimited
     """
+
+    print("loading GO labels")
+    
     with open(labels_fname, 'r') as f:
         data = [row.strip() for row in f.readlines()]
 
