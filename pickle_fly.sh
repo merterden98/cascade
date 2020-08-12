@@ -12,4 +12,4 @@ python3 run.py \
         --type=DSD \
         --labelfile=$GO_MFBP4 \
         --labeltype=GO-MFBP4 \
-        --name=fly.gomfpb4.dsd
+        --name=fly.gomfbp4.dsd
