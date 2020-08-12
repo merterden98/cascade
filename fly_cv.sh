@@ -3,7 +3,7 @@ RESULTS=aug_results/
 # -------------------------------------------------------
 #                  Updated GO Fly Exp                    #
 mkdir $RESULTS
-python3 run.py --infile=pickles/fly.gomfbp4.pickle \
+python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=MV \
         --conftype=ENT \
