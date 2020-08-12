@@ -42,7 +42,7 @@ def vote(ppigraph=None,
         if nb_type == 'all':
             t_nearest = [
                 n for n in node.sorted_nodes_DSD[1:K + 1]
-               if node_dict[n].is_predict == None
+                if node_dict[n] not in predict_node_set
             ]  # don't include self
 
         if nb_type == 'known':
@@ -260,7 +260,7 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
         # Or is a predict node that we have no clue about
         node = node_dict[neighbor]
         if not node.labels or node.is_predict:
-            
+
             # We technically have only two levels of MIPS but
             # good to future proof here.
             for (i, label_list) in node.hierarchy_labels:
@@ -293,7 +293,7 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
             votes[label] *= hierarchy_dict[mips_2_prefix] * mips_2_boost
         elif mips_1_prefix in hierarchy_dict:
             votes[label] *= hierarchy_dict[mips_1_prefix] * mips_1_boost
-    
+
     return votes
 
 
