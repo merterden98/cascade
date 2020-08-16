@@ -209,7 +209,11 @@ def wmv_hierarchy(node, neighbors, node_dict, **kwargs):
     # votes = {}
     votes = node.votes
 
-    hierarchy_dict = aggregate_hierarchy_labels(neighbors, node_dict)
+    hierarchy_dict = aggregate_hierarchy_labels_weighted(
+        node,
+        neighbors,
+        node_dict
+    )
 
     for nb_name in neighbors:
         nb = node_dict[nb_name]
@@ -274,6 +278,37 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
     return hierarchy_labels
 
 
+
+def aggregate_hierarchy_labels_weighted(node, neighbors, node_dict):
+    """
+        Collates neighbors that do not have 
+        higher level labels.
+    """
+    # Key is label value is count
+    hierarchy_labels = {}
+    for nb_name in neighbors:
+        # Checks if we don't have labels for current node
+        # Or is a predict node that we have no clue about
+        nb = node_dict[nb_name]
+        if not nb.labels or nb.is_predict:
+
+            nb_dsd_val = node.dsd_dict[nb_name]
+
+            # We technically have only two levels of MIPS but
+            # good to future proof here.
+            for (i, label_list) in nb.hierarchy_labels:
+
+                for label in label_list:
+                    if label not in hierarchy_labels:
+                        # hierarchy_labels[label] = (1/nb_dsd_val)
+                        hierarchy_labels[label] = 1
+                    else:
+                        # hierarchy_labels[label] += (1/nb_dsd_val)
+                        hierarchy_labels[label] += 1
+
+    return hierarchy_labels
+
+
 def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
     """
         Boosts existing votes depending
@@ -283,7 +318,7 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
     """
 
     mips_2_boost = 1.5
-    mips_1_boost = 1.5
+    mips_1_boost = 10.0
 
     for label in votes.keys():
         mips_2_prefix = get_mips_2_prefix(label)
