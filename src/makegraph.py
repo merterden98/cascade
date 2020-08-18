@@ -4,6 +4,7 @@ makegraph.py
 Module used for generating graph object from PPI and function label data.
 
 """
+import json
 import csv
 import numpy as np
 import pprint
@@ -42,17 +43,23 @@ def load_GOlabels(labels_fname):
 
     print("loading GO labels")
     
-    with open(labels_fname, 'r') as f:
-        data = [row.strip() for row in f.readlines()]
+    #with open(labels_fname, 'r') as f:
+    #    data = [row.strip() for row in f.readlines()]
+    label_dict = dict()
+    with open("../../BLAST-MUNDO/experiments/humanBIOGRID_mouseBIOGRID/target_GO_labels_8-18-20--10-39-AM.json", 'r') as lptr:
+        label_dict = json.load(lptr)
 
-    labels_dict = {}
 
-    for row in data:
-        row_parts = row.split('\t')
-        name = row_parts[0]
-        labels = row_parts[1:]
-        labels_dict[name] = labels
-    return labels_dict
+    return {int(i): labels for i, labels in label_dict.items()}
+
+    #labels_dict = {}
+
+    '''for row in data:
+                    row_parts = row.split('\t')
+                    name = row_parts[0]
+                    labels = row_parts[1:]
+                    labels_dict[name] = labels
+                return labels_dict'''
 
 
 def mips_from_length(label_list):
@@ -90,6 +97,13 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
         
     return reduce(merge, hierarchy_labels_dict_list, {})
 
+def make_full_node_list(row, labels, full_node_list):
+    curr_idx = len(full_node_list)
+    row = row.tolist()
+    real_idx = labels[curr_idx]
+    
+    full_node_list[real_idx] = {k:v for k,v in {labels.get(other_idx):float(val) for other_idx, val in enumerate(row)}.items() if k}
+
 
 def load_dsd_matrix(dsd_fname, labels_dict):
     """
@@ -103,13 +117,19 @@ def load_dsd_matrix(dsd_fname, labels_dict):
     for each node, where dsd value dict contains 
     {'other node name': dsd value} pairs.
     """
-    with open(dsd_fname, 'r') as f:
-        csv_reader = csv.reader(f, delimiter='\t')
-        data = [row for row in csv_reader]
+    #with open(dsd_fname, 'r') as f:
+    #    csv_reader = csv.reader(f, delimiter='\t')
+    #    data = [row for row in csv_reader]
 
-    full_node_list = []
+    #full_node_list = []
 
-    # Split DSD data into headers and rows
+    data = np.load("../../BLAST-MUNDO/experiments/humanBIOGRID_mouseBIOGRID/dsd_pdist_matrix_8-18-20--10-39-AM.npy", allow_pickle=True)
+    full_node_list = dict()
+    np.apply_along_axis(make_full_node_list, 1, data, labels_dict, full_node_list)
+    return full_node_list
+
+
+'''    # Split DSD data into headers and rows
     headers = data[0][1:]
     rows = data[1:]
 
@@ -134,7 +154,7 @@ def load_dsd_matrix(dsd_fname, labels_dict):
 
         full_node_list.append([name, vals_dict])
 
-    return full_node_list
+    return full_node_list'''
 
 
 def format_nodes_DSD(node_list=None,
