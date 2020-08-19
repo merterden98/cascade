@@ -4,6 +4,7 @@ makegraph.py
 Module used for generating graph object from PPI and function label data.
 
 """
+import json
 import csv
 import numpy as np
 import pprint
@@ -44,7 +45,7 @@ def load_GOlabels(labels_fname):
     
     with open(labels_fname, 'r') as f:
         data = [row.strip() for row in f.readlines()]
-
+    
     labels_dict = {}
 
     for row in data:
@@ -109,7 +110,7 @@ def load_dsd_matrix(dsd_fname, labels_dict):
 
     full_node_list = []
 
-    # Split DSD data into headers and rows
+    #Split DSD data into headers and rows
     headers = data[0][1:]
     rows = data[1:]
 
