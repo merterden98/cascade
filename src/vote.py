@@ -55,6 +55,16 @@ def vote(ppigraph=None,
                 if t == K:
                     break
 
+        if nb_type == 'known_h':
+            t_nearest = []
+            t = 0
+            for n in node.sorted_nodes_DSD:
+                if node_dict[n] not in predict_node_set:
+                    t += 1
+                t_nearest.append(n)
+                if t == K:
+                    break
+
         # Use only with hierarchy voting functions; lets us use
         # the labels in higher levels from nodes also in predict_node_set
         if nb_type == 'all_h':

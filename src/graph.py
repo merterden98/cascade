@@ -30,7 +30,7 @@ class PPINode(object):
                  name=None,
                  dsd_dict=None,
                  sp_dict=None,
-                 labels=None,
+                 labels=[],
                  label_type=None,
                  hierarchy_labels=None):
         """
