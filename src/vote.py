@@ -219,7 +219,11 @@ def wmv_hierarchy(node, neighbors, node_dict, **kwargs):
     # votes = {}
     votes = node.votes
 
-    hierarchy_dict = aggregate_hierarchy_labels(neighbors, node_dict)
+    hierarchy_dict = aggregate_hierarchy_labels_weighted(
+        node,
+        neighbors,
+        node_dict
+    )
 
     for nb_name in neighbors:
         nb = node_dict[nb_name]
@@ -284,6 +288,37 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
     return hierarchy_labels
 
 
+
+def aggregate_hierarchy_labels_weighted(node, neighbors, node_dict):
+    """
+        Collates neighbors that do not have 
+        higher level labels.
+    """
+    # Key is label value is count
+    hierarchy_labels = {}
+    for nb_name in neighbors:
+        # Checks if we don't have labels for current node
+        # Or is a predict node that we have no clue about
+        nb = node_dict[nb_name]
+        if not nb.labels or nb.is_predict:
+
+            nb_dsd_val = node.dsd_dict[nb_name]
+
+            # We technically have only two levels of MIPS but
+            # good to future proof here.
+            for (i, label_list) in nb.hierarchy_labels:
+
+                for label in label_list:
+                    if label not in hierarchy_labels:
+                        # hierarchy_labels[label] = (1/nb_dsd_val)
+                        hierarchy_labels[label] = 1
+                    else:
+                        # hierarchy_labels[label] += (1/nb_dsd_val)
+                        hierarchy_labels[label] += 1
+
+    return hierarchy_labels
+
+
 def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
     """
         Boosts existing votes depending
@@ -292,8 +327,8 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
         TODO: Pass in boost params from top level
     """
 
-    mips_2_boost = 1.5
-    mips_1_boost = 1.5
+    mips_2_boost = 3.0 # 
+    mips_1_boost = 2.0 # 1.5 - 2.0 
 
     for label in votes.keys():
         mips_2_prefix = get_mips_2_prefix(label)
@@ -323,3 +358,17 @@ def get_mips_1_prefix(label):
         return label[:2]
     else:
         return None
+
+
+vote for node x
+
+get k nearest dsd neihbors of x == nbr_list
+
+let neihbors vote accoridng to mv/wmv
+
+look at nbr_list:
+"compile" a hierarchy_label_frequency if nbr doesnt have mips2 label
+-- record its mips1 label, and keep count across all nodes in nbr_list
+
+boost_votes:
+

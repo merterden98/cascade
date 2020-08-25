@@ -17,12 +17,12 @@
 # c) cascade all_hierarchical
 
 # SET RESULTS OUTPUT DIR
-RESULTS=aug01_results/
+RESULTS=aug_results/
 
 # -------------------------------------------------------
 #                  MIPS 2 - 2fold cv                    #
 
-# mips2 - 2fold - mv all ;
+# mips2 - 2fold - wmv all ;
 python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
