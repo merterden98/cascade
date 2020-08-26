@@ -42,10 +42,10 @@ def load_GOlabels(labels_fname):
     """
 
     print("loading GO labels")
-    
+
     with open(labels_fname, 'r') as f:
         data = [row.strip() for row in f.readlines()]
-    
+
     labels_dict = {}
 
     for row in data:
@@ -76,9 +76,9 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
             # Creates  [(MIPS_LEVEL, LABEL_LIST)] for every protein
             label_dict[protein_name] = [
                 (mips_from_length(label_dict[protein_name]),
-                label_dict[protein_name])
+                 label_dict[protein_name])
             ]
-            
+
     def merge(accum, new_dict):
         if not accum:
             return new_dict
@@ -88,8 +88,9 @@ def merge_hierarchy_labels(hierarchy_labels_dict_list):
                     prev = accum[key]
                     accum[key] = prev + new_dict[key]
             return accum
-        
-    return reduce(merge, hierarchy_labels_dict_list, {})
+
+    a = reduce(merge, hierarchy_labels_dict_list, {})
+    return a
 
 
 def load_dsd_matrix(dsd_fname, labels_dict):
@@ -110,7 +111,7 @@ def load_dsd_matrix(dsd_fname, labels_dict):
 
     full_node_list = []
 
-    #Split DSD data into headers and rows
+    # Split DSD data into headers and rows
     headers = data[0][1:]
     rows = data[1:]
 
