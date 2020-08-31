@@ -2,7 +2,7 @@
 mkdir -p pickles
 
 # define yeast cDSD and mips labels filenames
-YEAST_DSD_FILE="cDSD/biogrid35170.scerevisiae.cdsd"
+YEAST_DSD_FILE="sampledata/yeast.cdsd"
 MIPS1="sampledata/MIPSFirstLevel.list"
 MIPS2="sampledata/MIPSSecondLevel.list"
 MIPS3="sampledata/MIPSThirdLevel.list"

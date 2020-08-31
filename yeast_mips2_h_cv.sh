@@ -13,18 +13,20 @@
 # c) cascade all_hierarchical
 
 # SET RESULTS OUTPUT DIR
+
 RESULTS=aug_results/
 
 # -------------------------------------------------------
 #                  MIPS 2 - 2fold cv                    #
 
+mkdir $RESULTS
 # mips2 - 2fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
         --vtype=MVH \
         --conftype=ENT \
         --threshold=0.35 \
-        --ntype=all_h \
+        --ntype=known_h \
         --rounds=12 \
         --cv_rounds=2 \
         --mode=cv \
@@ -34,12 +36,12 @@ python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
 #                  MIPS 2 - 4fold cv                    #
 
 # mips2 - 4fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
         --vtype=MVH \
         --conftype=ENT \
         --threshold=0.35 \
-        --ntype=all_h \
+        --ntype=known_h \
         --rounds=12 \
         --cv_rounds=4 \
         --mode=cv \
@@ -50,12 +52,12 @@ python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
 #                  MIPS 2 - 6fold cv                    #
 
 # mips2 - 6fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
         --vtype=MVH \
         --conftype=ENT \
         --threshold=0.35 \
-        --ntype=all_h \
+        --ntype=known_h \
         --rounds=12 \
         --cv_rounds=6 \
         --mode=cv \

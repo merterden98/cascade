@@ -55,6 +55,18 @@ def vote(ppigraph=None,
                 if t == K:
                     break
 
+        if nb_type == 'known_h':
+            t_nearest = []
+            t = 0
+            for i, n in enumerate(node.sorted_nodes_DSD):
+                if i == 0:
+                    continue
+                if node_dict[n] not in predict_node_set:
+                    t += 1
+                t_nearest.append(n)
+                if t == K:
+                    break
+
         # Use only with hierarchy voting functions; lets us use
         # the labels in higher levels from nodes also in predict_node_set
         if nb_type == 'all_h':
@@ -267,7 +279,7 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
 
             # We technically have only two levels of MIPS but
             # good to future proof here.
-            for (i, label_list) in node.hierarchy_labels:
+            for (_, label_list) in node.hierarchy_labels:
 
                 for label in label_list:
                     if label not in hierarchy_labels:
@@ -276,7 +288,6 @@ def aggregate_hierarchy_labels(neighbors, node_dict):
                         hierarchy_labels[label] += 1
 
     return hierarchy_labels
-
 
 
 def aggregate_hierarchy_labels_weighted(node, neighbors, node_dict):
@@ -317,8 +328,8 @@ def boost_votes(votes, hierarchy_dict, mips_2_boost=1.5, mips_1_boost=0.5):
         TODO: Pass in boost params from top level
     """
 
-    mips_2_boost = 4.0  #
-    mips_1_boost = 2.0 # 1.5 - 2.0 
+    mips_2_boost = 3.0
+    mips_1_boost = 1.5  # 1.5 - 2.0
 
     for label in votes.keys():
         mips_2_prefix = get_mips_2_prefix(label)
@@ -348,20 +359,3 @@ def get_mips_1_prefix(label):
         return label[:2]
     else:
         return None
-
-
-
-# NOTES on all_h  method
-
-# vote for node x
-
-# get k nearest dsd neihbors of x == nbr_list
-
-# let neihbors vote accoridng to mv/wmv
-
-# look at nbr_list:
-# "compile" a hierarchy_label_frequency if nbr doesnt have mips2 label
-# -- record its mips1 label, and keep count across all nodes in nbr_list
-
-# boost_votes:
-

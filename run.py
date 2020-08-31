@@ -31,7 +31,7 @@ parser.add_argument('--K',
                     default=10,
                     help='number of neighbors for kNN')
 parser.add_argument('--ntype',
-                    choices=['all', 'known', 'all_h'],
+                    choices=['all', 'known', 'all_h', 'known_h'],
                     default='known')
 parser.add_argument('--rounds', type=int, default=10)
 parser.add_argument('--cv_rounds', type=int, default=2)
@@ -72,11 +72,11 @@ def main():
     if ppi_graph:
         if args.mode == 'predict':
             print(crossvalidate.predict(ppigraph=ppi_graph,
-                                  voting_type=args.vtype,
-                                  conf_type=args.conftype,
-                                  K=args.K,
-                                  nb_type=args.ntype,
-                                  cascade_rounds=args.rounds))
+                                        voting_type=args.vtype,
+                                        conf_type=args.conftype,
+                                        K=args.K,
+                                        nb_type=args.ntype,
+                                        cascade_rounds=args.rounds))
         if args.mode == 'cv':
             print("Running CV")
             print(args.infile)
