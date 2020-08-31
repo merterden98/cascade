@@ -1,5 +1,5 @@
 MVC - Accuracy Results
-2020-08-16 11:21:53.316126
+2020-08-22 09:33:30.558138
 
 Graph type:	S. Cerevisiae
 Metric:	DSD
@@ -13,10 +13,10 @@ Conf. algorithm:	ENT
 Conf. threshold:	0.35
 Cascade rounds: 	12
 
-Average accuracy: 	0.5616193961573652
-Std dev accuracy: 	0.006073327842542711
+Average accuracy: 	0.5648444647758464
+Std dev accuracy: 	0.005895024688407987
 
-Average F1 score: 	0.34145143617129864
-Std dev F1 score: 	0.0029501312962973395
+Average F1 score: 	0.3417339419312118
+Std dev F1 score: 	0.001671396636573225
 
 Acc. values measured using 10 rounds of CV

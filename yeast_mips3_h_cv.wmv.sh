@@ -1,27 +1,26 @@
-# yeast_mips2_cv_h.sh
+# yeast_mips3_h_cv.wmv.sh
 #
 # Description:
 # Script for running CV on hierarchical methods
-# for yeast PPI using MIPS 2 labels
+# for yeast PPI using MIPS 3 labels
+
+# WMV version -- cascade all_hierarchical
 
 # ALL tests should use following cascade settings:
 # conftype = ENT
 # cascade rounds = 12
 # threshold = 0.35
 
-# Compare using MV:
-# c) cascade all_hierarchical
-
 # SET RESULTS OUTPUT DIR
 RESULTS=aug_results/
 
 # -------------------------------------------------------
-#                  MIPS 2 - 2fold cv                    #
+#                  MIPS 3 - 2fold cv                    #
 
-# mips2 - 2fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+# mips3 - 2fold - wmvh allh ;
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
-        --vtype=MVH \
+        --vtype=WMVH \
         --conftype=ENT \
         --threshold=0.35 \
         --ntype=all_h \
@@ -31,12 +30,12 @@ python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
         --outdir=$RESULTS
 
 # -------------------------------------------------------
-#                  MIPS 2 - 4fold cv                    #
+#                  MIPS 3 - 4fold cv                    #
 
-# mips2 - 4fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+# mips3 - 4fold - wmvh allh ;
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
-        --vtype=MVH \
+        --vtype=WMVH \
         --conftype=ENT \
         --threshold=0.35 \
         --ntype=all_h \
@@ -47,12 +46,12 @@ python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
 
 
 # -------------------------------------------------------
-#                  MIPS 2 - 6fold cv                    #
+#                  MIPS 3 - 6fold cv                    #
 
-# mips2 - 6fold - mvh allh ;
-python3 run.py --infile=pickles/yeast.mips2.dsd.pickle \
+# mips3 - 6fold - wmvh allh ;
+python3 run.py --infile=pickles/yeast.mips3.dsd.pickle \
         --type=PICKLE \
-        --vtype=MVH \
+        --vtype=WMVH \
         --conftype=ENT \
         --threshold=0.35 \
         --ntype=all_h \

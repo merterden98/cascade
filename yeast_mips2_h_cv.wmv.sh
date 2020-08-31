@@ -1,4 +1,4 @@
-# yeast_mips2_cv_h.wmv.sh
+# yeast_mips2_h_cv.wmv.sh
 #
 # Description:
 # Script for running CV on hierarchical methods
@@ -10,8 +10,6 @@
 # conftype = ENT
 # cascade rounds = 12
 # threshold = 0.35
-
-
 
 # SET RESULTS OUTPUT DIR
 RESULTS=aug_results/
