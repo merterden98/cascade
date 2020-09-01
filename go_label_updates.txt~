@@ -1,0 +1,7 @@
+# GO label for fly network - UPDATE STRATEGY
+# 2020.08.31
+
+potential solution A:
+1. "manually" convert the new fb.gaf into "funcAssociate"-format
+2. Run Lily's April19 GoLabel tool (this is in the old mvc.git file)
+3. run it through informative_go.py (or equiv) script to get the +50 annotations from MF or BP
