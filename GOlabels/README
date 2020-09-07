@@ -1,0 +1,43 @@
+WRAPPER OVER GOLabel package from Yuelin Liu:
+
+*** scerevisiae_systematic_associations.txt ***
+
+- GO associations downloaded from FuncAssociate3.0 on March 22, 2019
+- Species: Saccharomyces cerevisiae
+- Evidence Codes: EXP, IMP, HMP, HEP, IDA, IGI, HGI, IPI, IEP, HDA
+- Name Space: sgd_systematic
+
+*** go-basic.obo ***
+
+[Gene Ontology]
+- Gene Ontology were downloaded on 02/11/19
+  (http://geneontology.org/docs/download-ontology/)
+- go-basic.obo was downloaded
+
+
+From Yuelin Liu readme:
+
+[Notes]
+- Some GO terms have altid's (alternative id), and the .obo file
+  documents the altid if a GO term has one. The hierarchyModule
+  constructs the ontology DAG with the main id for a GO term;
+  however, GO association files contain altid's. All altid's are
+  first translate into its corresponding main id's before being
+  propagated up the ontology.
+- At the end of each association file, there might be one line 
+  containing all genes without any GO term label.
+  Those gene names are not included in the final output file.
+- Not all labeled genes participate in all subcomponents of the
+  Gene Ontology. Genes that do not have GO labels in a subcomponent
+  are excluded from the output file for that subcomponent.
+- The tab-separated files have the following format:
+
+  [Gene_1] [GO term]@[GO level] ... [GO term]@[GOlevel]
+  ...
+  ...
+  ...
+  [Gene_x] [GO term]@[GO level] ... [GO term]@[GOlevel]
+
+- GO terms for each gene are sorted by GO levels (shortest path
+  distance to the root node of the subcomponent) in increasing
+  order

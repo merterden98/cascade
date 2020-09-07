@@ -171,9 +171,12 @@ def format_nodes_DSD(node_list=None,
         except KeyError:
             node_labels = []
 
-        hierarchy_labels = []
-        if name in hierarchy_labels_dict:
-            hierarchy_labels = hierarchy_labels_dict[name]
+        if hierarchy_labels_dict:
+            hierarchy_labels = []
+            if name in hierarchy_labels_dict:
+                hierarchy_labels = hierarchy_labels_dict[name]
+        else:
+            hierarchy_labels = []
         # Create PPINode object
         node_obj = graph.PPINode(name=name,
                                  dsd_dict=dsd_vals_dict,
