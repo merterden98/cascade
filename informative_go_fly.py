@@ -3,10 +3,10 @@ from src import makegraph
 
 
 # Hard code filenames - FLY
-cdsd_fname = "old_FLY/biogrid35170.dmelanogaster.cdsd"
-go_bp3_fname = "old_FLY/dmelanogaster_systematic_associations.biological_process"
-go_mf3_fname = "old_FLY/dmelanogaster_systematic_associations.molecular_function"
-outfile = "old_FLY/dmelanogaster_GO_inf.mfbp4"
+cdsd_fname = "flydata/biogrid35170.dmelanogaster.cdsd"
+go_bp3_fname = "flydata/fly_associations_new.biological_process"
+go_mf3_fname = "flydata/fly_associations_new.molecular_function"
+outfile = "flydata/dmelanogaster_GO_inf.new.mfbp4"
 
 mf3_fullgraph = makegraph.generate_graph_DSD(cdsd_fname,
                                              go_mf3_fname,
@@ -100,8 +100,10 @@ with open(outfile, 'w') as f:
     writer = csv.writer(f, delimiter='\t')
     writer.writerows(mfbp3_label_rows)
 
+
+# COMPUTE LABEL COVERAGE STATS
 # load pickle
-pfile = "pickles/fly.gomfbp4.OLD.dsd.pickle"
+pfile = "pickles/fly.gomfbp4.dsd.pickle"
 ppi_graph = pickle.load(open(pfile, 'rb'))
 
 total_len = len(ppi_graph.node_list)

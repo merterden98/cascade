@@ -15,7 +15,7 @@ mkdir -p pickles
 #         --name=fly.gomfbp4.dsd
 
 FLY_DSD_FILE="cDSD/biogrid35170.dmelanogaster.cdsd"
-GO_MFBP4="flydata/dmelanogaster_GO_inf_level4.OLD.mfbp3"
+GO_MFBP4="flydata/dmelanogaster_GO_inf.new.mfbp4"
 
 # make FLY-GOMFBPG4 pickle
 echo "making fly GO-MFBP4 pickle..."
@@ -24,4 +24,4 @@ python3 run.py \
         --type=DSD \
         --labelfile=$GO_MFBP4 \
         --labeltype=GO-MFBP4 \
-        --name=fly.gomfbp4.OLD.dsd
+        --name=fly.gomfbp4.new.dsd

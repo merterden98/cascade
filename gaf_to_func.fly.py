@@ -40,7 +40,7 @@ for row in raw_data:
     id_list = row[10].split("|")
     
     for i, item in enumerate(id_list):
-        if item.startswith("CG"):
+        if item.startswith("CG") or item.startswith("CR"):
             func_to_go[id_list[i]] += [(go_label, exp_type, go_type)]
             continue
         # print("no CG")
@@ -53,7 +53,7 @@ for key, vals in func_to_go.items():
             go_to_gene[go_label] += [key]
 
 go_to_gene_list = sorted(list(go_to_gene.items()), key=go_compare)
-with open(f"{fname}.associations.2", "w") as f:
+with open(f"{fname}.associations.3", "w") as f:
     write_preamble(f)
     for go_label, protein_list in go_to_gene_list:
         protein_str = " ".join(protein_list)

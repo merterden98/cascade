@@ -2,7 +2,7 @@ import hierarchyModule
 import associationModule
 
 hpath = "go-basic.obo.new"
-apath = "dmelanogaster_systematic_associations.new.txt"
+apath = "fly_associations_new.2.txt"
 # apath = "dmelanogaster_systematic_associations.txt"
 
 hm = hierarchyModule.hierarchyModule(hpath ,0)

@@ -1,7 +1,6 @@
 # fly_gomfbp4_cv.sh
 
-RESULTS=sep_results/
-
+RESULTS=sep7_fly_results/
 
 # MV CASCADE 
 

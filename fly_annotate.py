@@ -8,7 +8,7 @@ from src import makegraph
 from src import vote
 from src import confidence as conf
 from src import graph
-from src import stats
+# from src import stats
 from src.crossvalidate import *
 import sys
 import csv
@@ -18,11 +18,11 @@ def main(argv):
     from src import vote
     from src import confidence as conf
     from src import graph
-    from src import stats
+    # from src import stats
     
     # load graph
     # fly_graph = pickle.load(open("pickles/cdsd_FLY_gobp3_inf_35170.pkl", 'rb'))
-    fly_graph = pickle.load(open("pickles/cdsd_FLY_gomfbp3_infL6_35170.pkl", 'rb'))
+    fly_graph = pickle.load(open("pickles/fly.gomfbp4.OLD.dsd.pickle", 'rb'))
     # yeast_graph = pickle.load(open("pickles/cdsd_gomfbp3_inf_35170.pkl", 'rb'))
     # yeast_graph = pickle.load(open("pickles/cdsd_gomfbp3_infL4_35170.pkl", 'rb'))
     
@@ -85,8 +85,8 @@ def main(argv):
         conf.weighted_count_conf: "WCC",
     }
 
-    OUTPUT_DIR = "raw_results/FLY/annotate/test/"
-    outfile = "{}/flyAnnotate35170.{}.{}.{}.{}.{}.txt".format(
+    OUTPUT_DIR = "sep7_annotate_results"
+    outfile = "{}/flyAnnotate35170.{}.{}.{}.{}.{}.csv".format(
         OUTPUT_DIR,
         funcstrings[voting_func],
         funcstrings[conf_func],
@@ -96,7 +96,7 @@ def main(argv):
     )
 
     with open(outfile, 'w') as f:
-        writer = csv.writer(f, delimiter="\t")
+        writer = csv.writer(f)
         writer.writerows(output_rows)
 
 
