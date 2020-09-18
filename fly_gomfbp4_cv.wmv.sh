@@ -1,6 +1,6 @@
-# fly_gomfbp4_cv.sh
+# fly_gomfbp4_cv.wmv.sh
 
-RESULTS=sep7_fly_results/
+RESULTS=sep17_fly_results/
 
 # MV CASCADE 
 
@@ -8,7 +8,7 @@ RESULTS=sep7_fly_results/
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=all \
         --rounds=12 \
@@ -20,7 +20,7 @@ python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=all \
         --rounds=12 \
@@ -32,7 +32,7 @@ python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=all \
         --rounds=12 \
@@ -44,7 +44,7 @@ python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=known \
         --rounds=12 \
@@ -56,7 +56,7 @@ python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=known \
         --rounds=12 \
@@ -68,7 +68,7 @@ python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
 python3 run.py --infile=pickles/fly.gomfbp4.dsd.pickle \
         --type=PICKLE \
         --vtype=WMV \
-        --conftype=CT \
+        --conftype=ENT \
         --threshold=0.35 \
         --ntype=known \
         --rounds=12 \

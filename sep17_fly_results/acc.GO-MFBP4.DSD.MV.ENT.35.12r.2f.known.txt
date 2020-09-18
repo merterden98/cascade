@@ -1,0 +1,22 @@
+MVC - Accuracy Results
+2020-09-17 17:54:24.754617
+
+Graph type:	S. Cerevisiae
+Metric:	DSD
+
+Labels	 GO-MFBP4
+
+Voting algorithm:	MV
+Neighbor type:	known
+CV splits:	2
+Conf. algorithm:	ENT
+Conf. threshold:	0.35
+Cascade rounds: 	12
+
+Average accuracy: 	0.4062017640573319
+Std dev accuracy: 	0.005941238656971128
+
+Average F1 score: 	0.10875300084007025
+Std dev F1 score: 	0.0010854757926776878
+
+Acc. values measured using 10 rounds of CV
