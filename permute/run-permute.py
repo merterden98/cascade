@@ -12,12 +12,21 @@ from src import confidence as conf
 # ------------------------------------------------------------------
 # HARD CODED PPIgraph pickle generation
 
-cdsd_file = "biogrid35170.scerevisiae.cdsd"
-labels_file = "scerevisiae_GO_inf.mfbp4.txt"
+# YEAST SETTINGS
+# cdsd_file = "biogrid35170.scerevisiae.cdsd"
+# labels_file = "scerevisiae_GO_inf.mfbp4.txt"
+# labels_type = "GO"
+# metric_type = "DSD"
+# pickle_file = "yeast-GO-mfbp4.pickle"
+
+# FLY SETTINGS
+cdsd_file = "biogrid35170.dmelanogaster.cdsd"
+labels_file = "dmelanogaster_GO_inf.new.mfbp4.txt"
 labels_type = "GO"
 metric_type = "DSD"
-pickle_file = "yeast-GO-mfbp4.pickle"
+pickle_file = "fly-GO-mfbp4.pickle"
 
+# make pickle
 # ppi_graph = makegraph.getPPIGraph(
 #     cdsd_file,
 #     labels_file,
@@ -26,6 +35,22 @@ pickle_file = "yeast-GO-mfbp4.pickle"
 #     None
 # )
 # pickle.dump(ppi_graph, open(pickle_file, "wb"))
+
+
+# run CV for debugging
+# ppi_graph = pickle.load(open(pickle_file, "rb"))
+# cv.run_cv_tests(
+#     ppigraph=ppi_graph,
+#     voting_type="WMV",
+#     conf_type="CT",
+#     K=10,
+#     nb_type="known",
+#     cascade_rounds=12, 
+#     conf_threshold=0.35,
+#     cv_splits=2, 
+#     outfile="./results/",
+#     labels="GO"
+# )
 
 
 # ------------------------------------------------------------------
@@ -123,7 +148,8 @@ def collect_confs(ppigraph=None):
 
 if __name__ == "__main__":
     confs_all = []
-    confs_pfile = "confs_vals.pickle"
+    # confs_pfile = "confs_vals.pickle"
+    confs_pfile = "confs_vals_fly.pickle"
 
     runs = 50
 
